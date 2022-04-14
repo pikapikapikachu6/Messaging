@@ -6,8 +6,6 @@ CDN Library: axios + SweetAlert2 + NProgress
 
 ## Get Started
 
-```
-
 Install dependency
 
 ```
