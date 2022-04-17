@@ -3,8 +3,25 @@ import { LoginIcon, UserAddIcon, UserGroupIcon } from '@heroicons/vue/outline'
 import { ArrowCircleRightIcon } from '@heroicons/vue/solid'
 import { HS256, sha256, short, salt } from '../utils/crypto.js'
 import { useRouter } from 'vue-router'
+import axios from "axios";
 
 const router = useRouter()
+let input = $ref('')
+let mes = $ref('')
+
+function sendRegister () {
+  axios.post('/api/register', {
+    'firstName': input,
+    'lastName': 'Flintstone'
+  })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+}
+
 
 </script>
 
@@ -16,7 +33,10 @@ const router = useRouter()
         <h1 class="text-3xl font-medium grid grid-cols-1 place-items-center"> Register </h1>
         <div class="mb-6 mt-10">
           <label class="block text-md font-bold mb-2" for="username"> Username: </label>
-          <input class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username">
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username" v-model="input">
+          <p> {{input}} </p>
+          <p> {{sendRegister()}} </p>
+          <p> mes: {{ mes }} </p>
         </div>
         <div class="mb-6">
           <label class="block text-md font-bold mb-2" for="password"> Password: </label>

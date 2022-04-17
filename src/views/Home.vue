@@ -1,10 +1,26 @@
 <script setup>
 import { LoginIcon, UserAddIcon, UserGroupIcon } from '@heroicons/vue/outline'
 
+import axios from 'axios'
+
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+let mes = $ref('')
 
+function gdata () {
+  axios.get('/api/hello').then((response)=>{
+    console.log(response.data)
+    mes = response.data
+    return response.data
+  }).catch((response)=>{
+    console.log(response)
+    mes = response.data
+    return response.data
+  })
+}
+
+gdata()
 
 </script>
 
@@ -17,9 +33,9 @@ const router = useRouter()
       <button class="card" @click="router.push('/login')"><login-icon class="w-6 text-purple-500 mr-2"/> Login</button>
       <button class="card" @click="router.push('/admin/sas')"><user-group-icon class="w-6 text-orange-500 mr-2"/>About</button>
     </div>
-
-     <img style="transition: all 0.5s ease;" src="../../public/chat.svg" class="absolute w-1/3 group-hover:left-0 left-1/3">
-  </div>
+    <!-- <img style="transition: all 0.5s ease;" src="../../public/chat.svg" class="absolute w-1/3 group-hover:left-0 left-1/3"> -->
+    <img style="transition: all 0.5s ease;" src="chat.svg" class="absolute w-1/3 group-hover:left-0 left-1/3">
+ </div>
 
 </template>
 

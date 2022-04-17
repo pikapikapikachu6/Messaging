@@ -1,7 +1,7 @@
 const enc = new TextEncoder('utf-8')
 const base64 = buffer => btoa(String.fromCharCode(...new Uint8Array(buffer)))
 
-export const salt = 'XYZSAS_STATIC_SALT'
+export const salt = ''
 
 // this is NOT cryptographically safe
 export const random = () => Math.random().toString(36).substr(2, 10)
@@ -15,3 +15,4 @@ export const HS256 = async (str, secret) => {
   const signature = await window.crypto.subtle.sign('HMAC', key, enc.encode(str))
   return base64(signature)
 }
+
