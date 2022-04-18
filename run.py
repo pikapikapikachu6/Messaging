@@ -10,16 +10,6 @@ import random
 app = Flask(__name__)
 
 
-# -----------------------------------------------------------------------------
-# Database
-# -----------------------------------------------------------------------------
-
-def init_database():
-    global db
-    db = sql.SQLDatabase()
-    db.database_setup()
-
-
 @app.route('/register', methods=['POST'])
 def register():
     username = request.json['username']
@@ -45,5 +35,6 @@ def login1():
 
 
 if __name__ == '__main__':
-    init_database()
+    db = sql.SQLDatabase()
+    db.database_setup()
     app.run(host='127.0.0.1', port=80, debug=True)

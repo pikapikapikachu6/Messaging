@@ -14,7 +14,7 @@ class SQLDatabase():
 
     # Get the database running
     def __init__(self, database_arg=":memory:"):
-        self.conn = sqlite3.connect(database_arg)
+        self.conn = sqlite3.connect(database_arg, check_same_thread=False)
         self.cur = self.conn.cursor()
 
     # SQLite 3 does not natively support multiple commands in a single statement
