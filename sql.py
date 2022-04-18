@@ -14,7 +14,7 @@ class SQLDatabase():
 
     # Get the database running
     def __init__(self, database_arg=":memory:"):
-        self.conn = sqlite3.connect(database_arg)
+        self.conn = sqlite3.connect(database_arg, check_same_thread=False)
         self.cur = self.conn.cursor()
 
     # SQLite 3 does not natively support multiple commands in a single statement
@@ -63,10 +63,10 @@ class SQLDatabase():
     #-----------------------------------------------------------------------------
 
     # Add a user to the database
-    def add_user(self, username, password, friend, admin=0):
+    def add_user(self, username, password, friend=None, admin=0):
         sql_cmd = """
                 INSERT INTO Users(username, password, friend, admin)
-                VALUES('{username}', '{password}', {admin}, '{friend}')
+                VALUES('{username}', '{password}', '{friend}', {admin})
             """
 
         sql_cmd = sql_cmd.format(username=username, password=password, friend=friend, admin=admin)
@@ -140,3 +140,17 @@ class SQLDatabase():
             return True
         else:
             return False
+    
+    def get_pwd(self, username):
+        sql_query = """
+                SELECT password
+                FROM Users
+                WHERE username = '{username}'
+            """
+        sql_query = sql_query.format(username=username)
+        data = self.execute(sql_query)
+        if not data is None:
+            return True
+        else:
+            return False
+
