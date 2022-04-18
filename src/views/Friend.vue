@@ -3,7 +3,10 @@ import { UserAddIcon } from '@heroicons/vue/outline'
 import Popper from './Popper.vue'
 import axios from "axios";
 import {salt, sha256, short} from "../utils/crypto";
+
+
 let username = $ref('')
+let friend = ['Tom', 'Lavender']
 
 async function addFriend() {
   console.log(username)
@@ -20,8 +23,7 @@ async function addFriend() {
       <input class="shadow appearance-none border rounded py-2 px-2 mt-3" id="username" type="text" placeholder="Enter username" v-model="username">
       <button class="rounded py-2 px-4 shadow-md bg-red-100 ml-3" @click="addFriend()">Add</button>
     </Popper>
-    <div class="mt-10 md:m-10 relative all-transition" style="min-height: 50vh;">
-    </div>
+
   </div>
 
 </template>
