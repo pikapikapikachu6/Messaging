@@ -1,7 +1,7 @@
 <script setup>
 import { LoginIcon, UserAddIcon, UserGroupIcon } from '@heroicons/vue/outline'
 import { ArrowCircleRightIcon, ArrowCircleLeftIcon } from '@heroicons/vue/solid'
-import { HS256, sha256, short, salt } from '../utils/crypto.js'
+import {HS256, sha256, short, salt, sha256a} from '../utils/crypto.js'
 import axios from 'axios'
 
 import { useRouter } from 'vue-router'
@@ -14,6 +14,7 @@ let random = $ref('')
 
 let username = $ref('')
 let pwd = $ref('')
+let mes = $ref('')
 
 let checkResult = $ref('')
 
@@ -32,13 +33,33 @@ async function pass() {
     })
     .then(function (response) {
       checkResult = response.data['result']
+      if (checkResult == true) {
+        username = response.data['username']
+      } else {
+        username = 'there is error'
+      }
       random = response.data['random']
-      username = response.data['username']
     })
     .catch(function (error) {
       console.log(error);
     });
   } else {
+    if (username != 'there is error') {
+      axios.post('/api/login-second', {
+        'username': username,
+        'password':  await sha256(short(await sha256(input + salt)) + random)
+      })
+      .then(function (response) {
+        mes = response.data
+        console.log(mes)
+        if (mes == true) {
+          router.push('/friend')
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    }
     random = ''
   }
   input = ''

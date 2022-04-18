@@ -6,7 +6,6 @@ from Crypto.Hash import SHA
 from Crypto.Signature import PKCS1_v1_5 as PKCS1_signature
 from Crypto.Cipher import PKCS1_v1_5 as PKCS1_cipher
 
-
 from flask import Flask, request, abort, jsonify
 import hashlib
 import string
@@ -14,10 +13,11 @@ import random
 import ssl
 import socket
 
-#-----------------
-#Own python file
+# -----------------
+# Own python file
 import sql
-#-------------------
+
+# -------------------
 app = Flask(__name__)
 
 
@@ -47,9 +47,15 @@ def login1():
     3.Generate random
     4.return result
     """
-    if check_cert():
-        print("Correct")
-        username = request.json['username']
+    username = request.json['username']
+    if db.check_username(username):
+        result = {
+            'result': False,
+            'username': None,
+            'random': None
+        }
+        return result
+    else:
         random_str = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
         username_random[username] = random_str
         print(username, random_str, username_random)
@@ -59,13 +65,26 @@ def login1():
             'random': random_str
         }
         return result
-    else:
-        result = {
-            'result': False,
-            'username': None,
-            'random': None
-        }
-        return result
+
+    # if check_cert():
+    #     print("Correct")
+    #     username = request.json['username']
+    #     random_str = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
+    #     username_random[username] = random_str
+    #     print(username, random_str, username_random)
+    #     result = {
+    #         'result': True,
+    #         'username': username,
+    #         'random': random_str
+    #     }
+    #     return result
+    # else:
+    #     result = {
+    #         'result': False,
+    #         'username': None,
+    #         'random': None
+    #     }
+    #     return result
 
 
 @app.route('/login-second', methods=['POST'])
@@ -78,43 +97,60 @@ def login2():
     2.db_pwd = Hash(db.pwd, random)
     3.db_pwd ? user_pwd
     """
-    #Input
+    # Input
     username = request.json['username']
     user_pwd = request.json['password']
-    public_key = request.json['public_key']
+    print("db username : ")
+    print(username)
+    print("db password : ")
+    print(user_pwd)
+    # public_key = request.json['public_key']
 
-    #encry
+    # encry
     random_str = username_random[username]
-    db_pwd = db.get_pwd(username)
+    print("db random_str : ")
+    print(random_str)
+    db_pwd = db.get_pwd(username)[0]
+    print("db password : ")
+    print(db_pwd)
     db_pwd_salt = db_pwd + random_str
-    #RSA encryption
-    encrypt_data = encrypt_data(public_key, db_pwd_salt)
-    if user_pwd == encrypt_data:
-        return True
-    return False
+    print("db db_pwd_salt : ")
+    print(db_pwd_salt)
+    data_sha = base64.b64encode(hashlib.sha256(db_pwd_salt.encode('utf-8')).digest()).decode('ascii')
+    print("db data_sha : ")
+    print(data_sha)
+    # RSA encryption
+    # encrypt_data = encrypt_data(public_key, db_pwd_salt)
+    if user_pwd == data_sha:
+        return "true"
+    else:
+        return "false"
+
 
 def check_cert():
-    #Host name should be ours
+    # Host name should be ours
     hostname = "http://127.0.0.1"
-    port = 3000
+    port = 80
     context = ssl.create_default_context()
     sockets = context.wrap_socket(socket.socket(), server_hostname=hostname)
-    sockets.connect((hostname, port))
+    sockets.bind((hostname, port))
     try:
         cert = sockets.getpeercert()
     except ValueError:
         cert = None
     print(cert)
-    #Wrong certication
+    # Wrong certication
     if cert is None:
         return False
     return True
 
-#RSA encryption
+
+# RSA encryption
 def encrypt_data(public_key, msg):
     cipher = PKCS1_cipher.new(public_key)
     encrypt_text = base64.b64encode(cipher.encrypt(bytes(msg.encode("utf8"))))
     return encrypt_text.decode('utf-8')
+
 
 if __name__ == '__main__':
     db = sql.SQLDatabase()

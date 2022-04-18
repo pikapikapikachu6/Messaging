@@ -3,7 +3,6 @@ import { UserAddIcon } from '@heroicons/vue/outline'
 import Popper from './Popper.vue'
 import axios from "axios";
 import {salt, sha256, short} from "../utils/crypto";
-import AffairCard from '../components/AffairCard.vue'
 let username = $ref('')
 
 async function addFriend() {
@@ -22,8 +21,6 @@ async function addFriend() {
       <button class="rounded py-2 px-4 shadow-md bg-red-100 ml-3" @click="addFriend()">Add</button>
     </Popper>
     <div class="mt-10 md:m-10 relative all-transition" style="min-height: 50vh;">
-      <p>hello here </p>
-      <affair-card v-for="i in 3"></affair-card>
     </div>
   </div>
 

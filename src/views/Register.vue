@@ -29,13 +29,9 @@ async function sendRegister() {
   });
 }
 
-
-console.log(sha256(pwd))
-
 </script>
 
 <template>
-  {{ mes }}
   <div class="h-screen bg-gradient-to-b from-blue-100 to-purple-100 flex justify-center items-center">
     <img style="transition: all 0.5s ease;" src="register.svg" class="mr-20 absolue w-1/3">
     <div class="w-full max-w-sm" >

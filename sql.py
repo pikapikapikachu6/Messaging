@@ -64,6 +64,8 @@ class SQLDatabase():
 
     # Add a user to the database
     def add_user(self, username, password, friend=None, admin=0):
+        print("password: ")
+        print(password)
         sql_cmd = """
                 INSERT INTO Users(username, password, friend, admin)
                 VALUES('{username}', '{password}', '{friend}', {admin})
@@ -148,9 +150,12 @@ class SQLDatabase():
                 WHERE username = '{username}'
             """
         sql_query = sql_query.format(username=username)
+        print(sql_query)
         data = self.execute(sql_query)
-        if not data is None:
-            return True
-        else:
-            return False
+        print(data)
+        # if not data is None:
+        #     return True
+        # else:
+        #     return False
+        return data
 
