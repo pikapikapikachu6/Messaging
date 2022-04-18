@@ -6,22 +6,26 @@ import { useRouter } from 'vue-router'
 import axios from "axios";
 
 const router = useRouter()
-let input = $ref('')
+let username = $ref('')
+let pwd = $ref('')
+let checkPwd = $ref('')
 let mes = $ref('')
 
-function sendRegister () {
+async function sendRegister() {
   axios.post('/api/register', {
-    'firstName': input,
-    'lastName': 'Flintstone'
+    'username': username,
+    'password': short(await sha256(pwd + salt))
   })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
 }
 
+
+console.log(sha256(pwd))
 
 </script>
 
@@ -33,16 +37,17 @@ function sendRegister () {
         <h1 class="text-3xl font-medium grid grid-cols-1 place-items-center"> Register </h1>
         <div class="mb-6 mt-10">
           <label class="block text-md font-bold mb-2" for="username"> Username: </label>
-          <input class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username" v-model="input">
-          <p> {{input}} </p>
-          <p> {{sendRegister()}} </p>
-          <p> mes: {{ mes }} </p>
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username" v-model="username">
         </div>
         <div class="mb-6">
           <label class="block text-md font-bold mb-2" for="password"> Password: </label>
-          <input class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="************">
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="************" v-model="pwd">
         </div>
-        <button class="bg-blue-500 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-5 ml-12"> Register </button>
+        <div class="mb-6">
+          <label class="block text-md font-bold mb-2" for="password"> Retype Password: </label>
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="re-password" type="password" placeholder="************" v-model="checkPwd">
+        </div>
+        <button class="text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-5 ml-12" :class="(pwd === checkPwd && pwd != '') ? 'bg-blue-500 hover:bg-blue-300' : 'bg-gray-300'" @click="sendRegister()"> Register </button>
         <button class="bg-blue-500 hover:bg-blue-300 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-5 ml-12" @click="router.push('/')"> Return</button>
      </form>
     </div>

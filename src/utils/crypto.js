@@ -1,7 +1,7 @@
 const enc = new TextEncoder('utf-8')
 const base64 = buffer => btoa(String.fromCharCode(...new Uint8Array(buffer)))
 
-export const salt = ''
+export const salt = 'INFO2222-Project'
 
 // this is NOT cryptographically safe
 export const random = () => Math.random().toString(36).substr(2, 10)
