@@ -5,51 +5,60 @@ import { HS256, sha256, short, salt } from '../utils/crypto.js'
 import axios from 'axios'
 
 import { useRouter } from 'vue-router'
+import {watchEffect} from "vue";
 
 const router = useRouter()
 
 let input = $ref('')
 let random = $ref('')
 
-// let inputElement = $ref()
-// watchEffect(() => {ß
-//   if (inputElement) inputElement.focus()
-// })
+let username = $ref('')
+let pwd = $ref('')
 
-async function next() {
-  console.log('input'+ input)
-  console.log(random);
+let checkResult = $ref('')
+
+let inputElement = $ref()
+watchEffect(() => {
+  if (inputElement) inputElement.focus()
+})
+
+async function pass() {
+  console.log('random: ' + random)
+  console.log('input: ' + input)
   if (!input) return
-  if (!random) {
-    random = '12345'
-    console.log('random' + random);
-    user.name = short(await sha256(input))
-    // random = await axios.get('./test.json').then(res => {console.log(res)})
-    console.log(user.name)
+  if (!random) { // first
+    axios.post('/api/login-first', {
+      'username': input
+    })
+    .then(function (response) {
+      checkResult = response.data['result']
+      random = response.data['random']
+      username = response.data['username']
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   } else {
-    return
+    random = ''
   }
   input = ''
 }
-
 
 </script>
 
 <template>
   <div class="h-screen bg-gradient-to-b from-blue-100 to-purple-100 flex justify-center items-center">
-    <div class="w-full max-w-sm" >
-      <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div class="w-full max-w-md" >
+      <form class="bg-white shadow-md rounded px-8 pt-10 pb-10 mb-4">
         <h1 class="text-3xl font-medium grid grid-cols-1 place-items-center"> Login </h1>
         <div class="mb-6 mt-10">
-          <!-- <label class="block text-md font-bold mb-2" for="username"> Username: </label> -->
-          <!-- <input class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="username" placeholder="Username" v-model="input"> -->
-          <input class="w-2/3 mt-6 mb-4 rounded px-3 py-2 radius-2 border-2 border-gray-300 focus:ring-1 focus:border-blue-300 transition"
-            :placeholder="random ? '请输入密码' : '请输入用户名'"
+          <input ref="inputElement" class="w-2/3 ml-14 mt-4 mb-4 rounded px-3 py-2 radius-2 border-2 border-gray-300 focus:ring-1 focus:border-blue-300 transition"
+            :placeholder="random ? 'Please input the password' : 'Please input the username'"
             :type="random ? 'password' : 'text'"
-            v-model="input" @keyup.enter="next"
+            v-model="input" @keyup.enter="pass()"
           >
         </div>
-        <button @click="next" name="next" class="mt-5 ml-20"><arrow-circle-right-icon class="w-12 h-12 transition" :class="input ? 'text-blue-500' : 'text-gray-300'"/></button>
+        <button @click="pass()" name="toNext" class="mt-5 ml-28"><arrow-circle-right-icon class="w-12 h-12 transition" :class="input ? 'text-blue-500' : 'text-gray-300'"/></button>
         <button @click="router.push('/')" name="return" class="mt-5 ml-16"><arrow-circle-left-icon class="w-12 h-12 transition text-blue-500"/></button>
       </form>
     </div>

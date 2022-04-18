@@ -6,21 +6,6 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-let mes = $ref('')
-
-function gdata () {
-  axios.get('/api/hello').then((response)=>{
-    console.log(response.data)
-    mes = response.data
-    return response.data
-  }).catch((response)=>{
-    console.log(response)
-    mes = response.data
-    return response.data
-  })
-}
-
-gdata()
 
 </script>
 
