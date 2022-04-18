@@ -21,10 +21,6 @@ import sql
 app = Flask(__name__)
 
 
-# -----------------------------------------------------------------------------
-# Database
-# -----------------------------------------------------------------------------
-
 @app.route('/register', methods=['POST'])
 def register():
     username = request.json['username']

@@ -1,18 +1,37 @@
 <script setup>
-
 import { UserAddIcon } from '@heroicons/vue/outline'
+import Popper from './Popper.vue'
+import axios from "axios";
+import {salt, sha256, short} from "../utils/crypto";
+import AffairCard from '../components/AffairCard.vue'
+let username = $ref('')
+
+async function addFriend() {
+  console.log(username)
+  username = ''
+}
 </script>
 
 <template>
   <div class="h-screen bg-gradient-to-b from-blue-100 to-purple-100">
     <h1 class="text-4xl font-medium grid grid-cols-1 place-items-center h-40 text-rose-700"> Welcome to Messaging Tool ~ </h1>
     <h1 class="text-3xl font-medium grid grid-cols-1 place-items-center text-amber-400"> Friend List </h1>
-    <button class="" @click=""><user-add-icon class="w-10 mt-10 ml-32"/></button>
-
+    <button class="card" @click="$refs.PopperCom.show($event)"> Add Friend </button>
+    <Popper ref="PopperCom">
+      <input class="shadow appearance-none border rounded py-2 px-2 mt-3" id="username" type="text" placeholder="Enter username" v-model="username">
+      <button class="rounded py-2 px-4 shadow-md bg-red-100 ml-3" @click="addFriend()">Add</button>
+    </Popper>
+    <div class="mt-10 md:m-10 relative all-transition" style="min-height: 50vh;">
+      <p>hello here </p>
+      <affair-card v-for="i in 3"></affair-card>
+    </div>
   </div>
 
 </template>
 
 
 <style scoped>
+button.card {
+  @apply flex items-center rounded py-2 px-4 shadow-md bg-pink-200 hover:shadow-lg m-2 transition-all ml-20 mt-10
+}
 </style>
