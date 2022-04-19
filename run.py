@@ -31,6 +31,7 @@ def register():
     print(username, pwd)
     if db.check_username(username):
         pk = load_key("pk")
+        print(pk)
         print("Success check username")
         db.add_user(username, pwd)
         result = {
@@ -196,6 +197,7 @@ def load_key(key):
             for line in private_file:
                 sk += line
         return sk
+
 def check_cert():
     # Host name should be ours
     hostname = "http://127.0.0.1"

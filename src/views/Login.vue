@@ -67,7 +67,9 @@ async function generateRSAKeys () {
 async function pass() {
   console.log('random: ' + random)
   console.log('input: ' + input)
-  pk = window.localStorage.getItem(pk)
+  pk = window.localStorage.getItem("pulic_key")
+  console.log("This is login")
+  console.log(pk)
   //加密
   var msg = "I am client"
   console.log(pk)

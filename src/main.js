@@ -7,8 +7,6 @@ import './index.css'
 router.afterEach(Swal.close)
 createApp(App).use(router).mount('#app')
 
-Vue.config.productionTip = false
-
 new Vue({
   router,
   store,

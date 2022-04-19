@@ -26,7 +26,7 @@ class SQLDatabase():
         for string in sql_string.split(";"):
             try:
                 out = self.cur.execute(string)
-                data = self.cur.fetchone()
+                data = self.cur.fetchall()
             except:
                 pass
         return data
@@ -49,21 +49,21 @@ class SQLDatabase():
         self.execute("""CREATE TABLE Users(
             username TEXT,
             password TEXT,
-            friend TEXT,
+            friend JSON,
             admin INTEGER DEFAULT 0
         )""")
 
         self.commit()
 
         # Add our admin user
-        self.add_user('admin', admin_password, friend=None, admin=1,)
+        self.add_user('admin', admin_password, friend=None, admin=1)
 
     #-----------------------------------------------------------------------------
     # User handling
     #-----------------------------------------------------------------------------
 
     # Add a user to the database
-    def add_user(self, username, password, friend=None, admin=0):
+    def add_user(self, username, password, index=0, friend=None, admin=0):
         print("password: ")
         print(password)
         sql_cmd = """
@@ -85,8 +85,8 @@ class SQLDatabase():
             """
 
         sql_cmd = sql_cmd.format(username=username, friend=friend)
-
-        self.execute(sql_cmd)
+        data = self.execute(sql_cmd)
+        print("add_friend:",)
         self.commit()
         return True
     #-----------------------------------------------------------------------------
@@ -102,14 +102,13 @@ class SQLDatabase():
         sql_query = sql_query.format(username=username)
         data = self.execute(sql_query)
         #data = self.cur.fetchone()[0]
-        print(data)
+        print("Check useraname:", data)
 
         # If our query returns
         if not data is None:
             return False
         else:
             return True
-
 
     # Check login credentials
     def check_credentials(self, username, password):
@@ -122,7 +121,7 @@ class SQLDatabase():
         sql_query = sql_query.format(username=username, password=password)
         #data = self.cur.fetchone()[0]
         data = self.execute(sql_query)
-        print(data)
+        print("check credentials:", data)
         # If our query returns
         if not data is None:
             return True
@@ -138,8 +137,8 @@ class SQLDatabase():
         sql_query = sql_query.format(username=username)
         #data = self.cur.fetchone()[0]
         data = self.execute(sql_query)
-        print("data:")
-        print(data)
+        data = self.remove_none(data)
+        print("get_friend:", data)
         return data
     
     def get_pwd(self, username):
@@ -151,10 +150,48 @@ class SQLDatabase():
         sql_query = sql_query.format(username=username)
         print(sql_query)
         data = self.execute(sql_query)
-        print(data)
+        data = self.remove_none(data)
+        print("get_pwd:", data)
         # if not data is None:
         #     return True
         # else:
         #     return False
         return data
-
+    
+    def show_values(self):
+        sql_query = """
+                SELECT *
+                FROM Users
+            """
+        sql_query = sql_query.format()
+        data = self.execute(sql_query)
+        print("show values:", data)
+        # if not data is None:
+        #     return True
+        # else:
+        #     return False
+        return data
+    
+    def show_info(self, username):
+        sql_query = """
+                SELECT *
+                FROM Users
+                WHERE username = '{username}'
+            """
+        sql_query = sql_query.format(username=username)
+        data = self.execute(sql_query)
+        print("show values:", data)
+        # if not data is None:
+        #     return True
+        # else:
+        #     return False
+        return data
+    
+    def remove_none(self, data):
+        new_data = []
+        if not data is None:
+            for value in data:
+                print("remove_none:", value)
+                if not value[0] == 'None':
+                    new_data.append(value)
+        return new_data

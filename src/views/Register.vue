@@ -22,9 +22,10 @@ async function sendRegister() {
     mes = resp.data['result']
     if (mes === 'success') {
       pk = resp.data['public_key']
-      window.localStorage.setItem(pk, JSON.stringify(obj))
+      window.localStorage.setItem("pulic_key", JSON.stringify(pk))
+      let test = window.localStorage.getItem("pulic_key")
       console.log("This is register")
-      console.log(pk)
+      console.log(test)
       router.push('/login')
     }
   })
