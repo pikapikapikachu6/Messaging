@@ -12,6 +12,7 @@ let pwd = $ref('')
 let checkPwd = $ref('')
 let mes = $ref('')
 let pk = $ref('')
+let key = $ref('')
 
 async function sendRegister() {
   axios.post('/api/register', {
@@ -23,10 +24,11 @@ async function sendRegister() {
     mes = resp.data['result']
     if (mes === 'success') {
       pk = resp.data['public_key']
-      Cookies.remove('pk');
-      Cookies.set('pk', pk, {expires: 7});
+      key = 'pk_' + username
+      Cookies.remove(key);
+      Cookies.set(key, pk, {expires: 1});
       console.log("This is register")
-      console.log(Cookies.get('pk'))
+      console.log(Cookies.get('pk_'))
       router.push('/login')
     }
   })

@@ -20,10 +20,13 @@ export const HS256 = async (str, secret) => {
 }
 
 export const RSA_encryption = (pk, msg) => {
-  var encryptor = new JSEncrypt()
-  encryptor.setPublicKey(pk)
-  var cipher = encryptor.encrypt(msg)
-  console.log(cipher)
-  return cipher
+  if (pk != undefined) {
+    var encryptor = new JSEncrypt()
+    encryptor.setPublicKey(pk)
+    var cipher = encryptor.encrypt(msg)
+    console.log(cipher)
+    return cipher
+  }
+  return "False"
 }
 

@@ -66,6 +66,13 @@ def login1():
     message = decrypt_data(sk, cipher)
     if message == "I am client":
         print("Success")
+    else:
+        result = {
+            'result': "Is not a Certificate Authority",
+            'username': None,
+            'random': None
+        }
+        return result
     print(message)
     username = request.json['username']
     random_str = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))

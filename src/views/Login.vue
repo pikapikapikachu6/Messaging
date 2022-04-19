@@ -29,6 +29,7 @@ let checkResult = $ref('')
 
 let pk = $ref('')
 let sk = $ref('')
+let key = $ref('')
 
 let inputElement = $ref()
 watchEffect(() => {
@@ -68,13 +69,18 @@ async function generateRSAKeys () {
 async function pass() {
   console.log('random: ' + random)
   console.log('input: ' + input)
-  pk = Cookies.get('pk')
+  key = 'pk_' + input
+  pk = Cookies.get(key)
   console.log("This is login")
   console.log(pk)
   //加密
   var msg = "I am client"
   console.log(pk)
   var cipher = RSA_encryption(pk, msg)
+  //这里需要显示一个CA不通过的提示。 这个算是根本找不到证书
+  if (cipher == "False") {
+    return
+  }
   console.log(cipher)
   if (!input) return
   if (!random) { // first
@@ -84,6 +90,10 @@ async function pass() {
     })
     .then(function (response) {
       checkResult = response.data['result']
+      //这里也需要显示一个CA不通过的提示， 这个算是证书错误
+      if (checkResult == "Is not a Certificate Authority"){
+        return
+      }
       if (checkResult == true) {
         username = response.data['username']
       } else {
