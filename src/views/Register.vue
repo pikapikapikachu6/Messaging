@@ -1,7 +1,7 @@
 <script setup>
 import { LoginIcon, UserAddIcon, UserGroupIcon } from '@heroicons/vue/outline'
 import { ArrowCircleRightIcon } from '@heroicons/vue/solid'
-import { HS256, sha256, short, salt } from '../utils/crypto.js'
+import { sha256, short, salt } from '../utils/crypto.js'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import Cookies from 'js-cookie'

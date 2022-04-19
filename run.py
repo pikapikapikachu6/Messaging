@@ -131,8 +131,10 @@ def login2():
     print(username)
     print("db password : ")
     print(user_pwd)
-    # public_key = request.json['public_key']
-    # username_public[username] = public_key
+    public_key = request.json['public_key']
+    username_public[username] = public_key
+    print("db public key array list: ")
+    print(username_public)
 
     # encry
     random_str = username_random[username]

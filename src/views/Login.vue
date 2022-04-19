@@ -40,6 +40,12 @@ let key = $ref('')
 
 function success (username) {
   user.name = username
+  user.pk = publicKey
+  user.sk = privateKey
+  console.log('privateKey:' + privateKey)
+  console.log('publicKey:' + publicKey )
+  console.log('pk:' + user.pk)
+  console.log('sk:' + user.sk )
   console.log(state.user)
   router.push('/friend')
 }
@@ -61,12 +67,19 @@ async function generateRSAKeys () {
     }, true, ['encrypt', 'decrypt'])
     const sk = RSA2text(await S.exportKey('pkcs8', k.privateKey))
     const pk = RSA2text(await S.exportKey('spki', k.publicKey))
-    return { pk, sk }
+    return [pk, sk]
   } catch (e) {
     console.error(e)
     return null
   }
 }
+
+async function getKeys() {
+  let keys = await generateRSAKeys()
+  privateKey = keys[0]
+  publicKey = keys[1]
+}
+
 
 async function pass() {
   if (!input) return
@@ -102,9 +115,11 @@ async function pass() {
   } else { //second
     console.log('second time here:')
     if (username != 'there is error') {
+      await getKeys()
       axios.post('/api/login-second', {
         'username': username,
-        'password':  await sha256(short(await sha256(input + salt)) + random)
+        'password':  await sha256(short(await sha256(input + salt)) + random),
+        'public_key': publicKey
       })
       .then(function (response) {
         mes = response.data
