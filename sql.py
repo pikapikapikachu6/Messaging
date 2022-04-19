@@ -138,10 +138,9 @@ class SQLDatabase():
         sql_query = sql_query.format(username=username)
         #data = self.cur.fetchone()[0]
         data = self.execute(sql_query)
-        if not data is None:
-            return True
-        else:
-            return False
+        print("data:")
+        print(data)
+        return data
     
     def get_pwd(self, username):
         sql_query = """

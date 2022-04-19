@@ -3,13 +3,51 @@ import { UserAddIcon } from '@heroicons/vue/outline'
 import Popper from './Popper.vue'
 import axios from "axios";
 import {salt, sha256, short} from "../utils/crypto";
-
+import AffairCard from '../components/AffairCard.vue'
 
 let username = $ref('')
-let friend = ['Tom', 'Lavender']
+let friend =  $ref([])
+let result =  $ref([])
+let user = $ref('')
+
+import state from '../state.js'
+console.log(state.user)
+
+async function addFriendToDB() {
+  axios.post('/api/add-friend', {
+    'username': user,
+    'friend': result
+  })
+      .then(resp => {
+        console.log(resp)
+        mes = resp.data
+        if (mes === 'success') {
+          router.push('/login')
+        }
+      })
+      .catch(function (error) {
+        mes = error
+        console.log(error)
+      })
+}
 
 async function addFriend() {
-  console.log(username)
+  axios.post('/api/check-friend', {
+    'username': username
+  })
+  .then(async function (res) {
+    console.log(res)
+    result = res.data
+    if (result === false) {
+      Swal.fire('Error', 'username not exists', 'error')
+    } else {
+      friend.push(result)
+      await addFriendToDB()
+    }
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
   username = ''
 }
 </script>
@@ -23,7 +61,9 @@ async function addFriend() {
       <input class="shadow appearance-none border rounded py-2 px-2 mt-3" id="username" type="text" placeholder="Enter username" v-model="username">
       <button class="rounded py-2 px-4 shadow-md bg-red-100 ml-3" @click="addFriend()">Add</button>
     </Popper>
-
+    <div v-for="a in friend">
+      <affair-card :friend="a"></affair-card>
+    </div>
   </div>
 
 </template>

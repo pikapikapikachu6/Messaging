@@ -21,7 +21,7 @@ import sql
 app = Flask(__name__)
 
 
-@app.route('/register', methods=['POST'])
+@app.route('/api/register', methods=['POST'])
 def register():
     username = request.json['username']
     pwd = request.json['password']
@@ -36,7 +36,7 @@ def register():
     return result
 
 
-@app.route('/login-first', methods=['POST'])
+@app.route('/api/login-first', methods=['POST'])
 def login1():
     """
     Input: Username
@@ -48,15 +48,15 @@ def login1():
     4.return result
     """
     username = request.json['username']
+    random_str = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
     if db.check_username(username):
         result = {
             'result': False,
             'username': None,
-            'random': None
+            'random': random_str
         }
         return result
     else:
-        random_str = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
         username_random[username] = random_str
         print(username, random_str, username_random)
         result = {
@@ -87,7 +87,7 @@ def login1():
     #     return result
 
 
-@app.route('/login-second', methods=['POST'])
+@app.route('/api/login-second', methods=['POST'])
 def login2():
     """
     Input: user_pwd = hash(pwd, random), public key
@@ -127,6 +127,30 @@ def login2():
         return "false"
 
 
+@app.route('/api/check-friend', methods=['POST'])
+def check_friend():
+    username = request.json['username']
+    print(username)
+    if db.check_username(username):
+        result = "false"
+    else:
+        result = username
+    return result
+
+
+@app.route('/api/add-friend', methods=['POST'])
+def add_friend_to_database():
+    username = request.json['username']
+    friend = request.json['friend']
+    print(username)
+    if db.check_username(username):
+        return "false"
+    else:
+        if db.add_friend(username, friend):
+            return "true"
+    return "false"
+
+
 def check_cert():
     # Host name should be ours
     hostname = "http://127.0.0.1"
@@ -156,4 +180,4 @@ if __name__ == '__main__':
     db = sql.SQLDatabase()
     db.database_setup()
     username_random = {}
-    app.run(host='127.0.0.1', port=80, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)
