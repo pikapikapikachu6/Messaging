@@ -53,6 +53,7 @@ async function addFriend() {
 </script>
 
 <template>
+
   <div class="h-screen bg-gradient-to-b from-blue-100 to-purple-100">
     <h1 class="text-4xl font-medium grid grid-cols-1 place-items-center h-40 text-rose-700"> Welcome to Messaging Tool ~ </h1>
     <h1 class="text-3xl font-medium grid grid-cols-1 place-items-center text-amber-400"> Friend List </h1>
@@ -61,6 +62,9 @@ async function addFriend() {
       <input class="shadow appearance-none border rounded py-2 px-2 mt-3" id="username" type="text" placeholder="Enter username" v-model="username">
       <button class="rounded py-2 px-4 shadow-md bg-red-100 ml-3" @click="addFriend()">Add</button>
     </Popper>
+    
+    <input v-model="msg" />
+    
     <div v-for="a in friend">
       <affair-card :friend="a"></affair-card>
     </div>

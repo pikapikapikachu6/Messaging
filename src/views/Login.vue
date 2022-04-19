@@ -1,7 +1,7 @@
 <script setup>
 import { LoginIcon, UserAddIcon, UserGroupIcon } from '@heroicons/vue/outline'
 import { ArrowCircleRightIcon, ArrowCircleLeftIcon } from '@heroicons/vue/solid'
-import {HS256, sha256, short, salt, sha256a} from '../utils/crypto.js'
+import {HS256, sha256, short, salt, sha256a, RSA_encryption} from '../utils/crypto.js'
 import axios from 'axios'
 
 import { useRouter } from 'vue-router'
@@ -19,6 +19,7 @@ let random = $ref('')
 let username = $ref('')
 let pwd = $ref('')
 let mes = $ref('')
+let msg = $ref('')
 
 let privateKey = $ref('')
 let publicKey = $ref('')
@@ -66,10 +67,17 @@ async function generateRSAKeys () {
 async function pass() {
   console.log('random: ' + random)
   console.log('input: ' + input)
+  pk = window.localStorage.getItem(pk)
+  //加密
+  var msg = "I am client"
+  console.log(pk)
+  var cipher = RSA_encryption(pk, msg)
+  console.log(cipher)
   if (!input) return
   if (!random) { // first
     axios.post('/api/login-first', {
-      'username': input
+      'username': input,
+      'cipher':cipher
     })
     .then(function (response) {
       checkResult = response.data['result']
@@ -112,6 +120,7 @@ async function pass() {
 </script>
 
 <template>
+
   <div class="h-screen bg-gradient-to-b from-blue-100 to-purple-100 flex justify-center items-center">
     <div class="w-full max-w-md" >
       <div class="bg-white shadow-md rounded px-8 pt-10 pb-10 mb-4">

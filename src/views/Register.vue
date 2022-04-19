@@ -10,6 +10,7 @@ let username = $ref('')
 let pwd = $ref('')
 let checkPwd = $ref('')
 let mes = $ref('')
+let pk = $ref('')
 
 async function sendRegister() {
   axios.post('/api/register', {
@@ -18,8 +19,12 @@ async function sendRegister() {
   })
   .then(resp => {
     console.log(resp)
-    mes = resp.data
+    mes = resp.data['result']
     if (mes === 'success') {
+      pk = resp.data['public_key']
+      window.localStorage.setItem(pk, JSON.stringify(obj))
+      console.log("This is register")
+      console.log(pk)
       router.push('/login')
     }
   })

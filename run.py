@@ -1,10 +1,13 @@
 from asyncio import tasks
+from crypt import methods
+import queue
 from random import getrandbits
 import base64
+import uuid
 from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5 as Cipher_pksc1_v1_5
 from Crypto.Hash import SHA
-from Crypto.Signature import PKCS1_v1_5 as PKCS1_signature
-from Crypto.Cipher import PKCS1_v1_5 as PKCS1_cipher
+
 
 from flask import Flask, request, abort, jsonify
 import hashlib
@@ -12,6 +15,7 @@ import string
 import random
 import ssl
 import socket
+import os
 
 # -----------------
 # Own python file
@@ -20,33 +24,46 @@ import sql
 # -------------------
 app = Flask(__name__)
 
-
 @app.route('/api/register', methods=['POST'])
 def register():
     username = request.json['username']
     pwd = request.json['password']
     print(username, pwd)
     if db.check_username(username):
+        pk = load_key("pk")
         print("Success check username")
         db.add_user(username, pwd)
-        result = 'success'
+        result = {
+            'result': 'success',
+            'public_key': pk
+        }
         print("success")
     else:
-        result = 'username has exists'
+        result = {
+            'result': 'username has exists',
+            'public_key': 'None'
+        }
     return result
-
 
 @app.route('/api/login-first', methods=['POST'])
 def login1():
     """
     Input: Username
-    Output: result, username, random
+    Output: result, username, random, server_ca
     Flow:
     1.check Certification
     2.Record username
     3.Generate random
     4.return result
     """
+    #Check CA
+    cipher = request.json['cipher']
+    sk = load_key("sk")
+    print(cipher)
+    message = decrypt_data(sk, cipher)
+    if message == "I am client":
+        print("Success")
+    print(message)
     username = request.json['username']
     random_str = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
     if db.check_username(username):
@@ -105,6 +122,7 @@ def login2():
     print("db password : ")
     print(user_pwd)
     # public_key = request.json['public_key']
+    # username_public[username] = public_key
 
     # encry
     random_str = username_random[username]
@@ -150,7 +168,34 @@ def add_friend_to_database():
             return "true"
     return "false"
 
+#Generate a certification
+#Store the key in the files
+def generate_cert():
+    key = RSA.generate(2048)
+    private_key = key.export_key()
+    public_key = key.publickey().export_key()
+    directory = "cert"
+    if not os.path.isdir(directory):
+        os.makedirs(directory)
+    with open("cert/private.pem", "wb") as private_file:
+        private_file.write(private_key)
+    with open("cert/public.pem", "wb") as public_file:
+        public_file.write(public_key)
 
+#return the public key
+def load_key(key):
+    if key == "pk":
+        pk = ""
+        with open("cert/public.pem") as public_file:
+            for line in public_file:
+                pk += line
+        return pk
+    else:
+        sk = ""
+        with open("cert/private.pem") as private_file:
+            for line in private_file:
+                sk += line
+        return sk
 def check_cert():
     # Host name should be ours
     hostname = "http://127.0.0.1"
@@ -168,16 +213,106 @@ def check_cert():
         return False
     return True
 
+# RSA decryption
+def decrypt_data(private_key, msg):
+    decodeStr = base64.b64decode(msg)
+    rsakey = RSA.importKey(private_key)
+    prikey = Cipher_pksc1_v1_5.new(rsakey)
+    encry_text = prikey.decrypt(decodeStr, b'rsa')
+    return encry_text.decode('utf8')
 
-# RSA encryption
-def encrypt_data(public_key, msg):
-    cipher = PKCS1_cipher.new(public_key)
-    encrypt_text = base64.b64encode(cipher.encrypt(bytes(msg.encode("utf8"))))
-    return encrypt_text.decode('utf-8')
+histroy = {}  # 存储聊天记录，100条 #{(sender, receiver): [messages]}
 
+# sender, receiver and their messages
+user_msg = {} #{(sender, receiver): [messages]}
+
+# 已下线用户
+out_msg = {} #{(sender, receiver): [messages]} (sender, receiver) share (receiver, sender)
+
+
+@app.after_request  # 解决CORS跨域请求
+def cors(response):
+    response.headers['Access-Control-Allow-Origin'] = "*"
+    if request.method == "OPTIONS":
+        response.headers["Access-Control-Allow-Headers"] = "Origin,Content-Type,Cookie,Accept,Token,authorization"
+    return response
+
+@app.route('/api/send_message', methods=["POST"])
+def send_message():
+    """
+    input: sender_username, receiver_username. msg
+    output: status
+    """
+    sender_username = request.json['sender_username']
+    receiver_username = request.json['receiver_username']
+    message = request.json['message']
+    #time = request.json.get("time")
+
+    user_tut = check_name(sender_username, receiver_username)
+    if user_tut in user_msg:
+        user_msg[user_tut].append(message)
+        histroy[user_tut].append(message)
+    else:
+        user_msg[user_tut] = message
+        histroy[user_tut] = message
+
+    #Reduce the message
+    if len(user_msg[user_tut]) > 100:
+        half = int(len(user_msg[user_tut])/2)
+        user_msg[user_tut] = user_msg[user_tut][half:]
+        histroy[user_tut] = histroy[user_tut][half:]
+
+    return jsonify({
+        "status": 1,
+        "error": "",
+        "message": "",
+    })
+
+@app.route('/api/get_all_message', methods=["POST"])
+def get_all_message():
+    """
+    message
+    """
+    global histroy
+    if len(histroy) == 100:
+        histroy = histroy[90:101]
+    return jsonify(histroy)
+
+
+"""
+暂时无视这个，之后有时间再来完善这个方法
+@app.route('/get_new_message', methods=["POST"])
+def get_new_message():
+    sender_username = request.json['sender_username']
+    receiver_username = request.json['receiver_username']
+    q = user_queue[username]
+    try:
+        # 获取不到就阻塞,不立即返回
+        new_message_dic = q.get(timeout=30)
+    except queue.Empty:
+        return jsonify({
+            "status": 0,
+            "error": "没有新消息",
+            "message": "",
+        })
+    return jsonify({
+        "status": 1,
+        "error": "",
+        "message": new_message_dic
+    })
+"""
+def check_name(sender, receiver):
+    sender_tut = (sender, receiver)
+    receiver_tut = (sender, receiver)
+
+    if receiver_tut in user_msg:
+        return receiver_tut
+    return sender_tut
 
 if __name__ == '__main__':
     db = sql.SQLDatabase()
     db.database_setup()
-    username_random = {}
-    app.run(host='0.0.0.0', port=80, debug=True)
+    username_random = {} #The username with corresponding random string 
+    username_public = {} #The useranme with corresponding public key
+    generate_cert()
+    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)

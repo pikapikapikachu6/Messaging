@@ -1,3 +1,5 @@
+import JSEncrypt from 'jsencrypt'
+
 const enc = new TextEncoder('utf-8')
 const base64 = buffer => btoa(String.fromCharCode(...new Uint8Array(buffer)))
 
@@ -15,5 +17,13 @@ export const HS256 = async (str, secret) => {
   const key = await window.crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: { name: 'SHA-256' }},false,['sign', 'verify'])
   const signature = await window.crypto.subtle.sign('HMAC', key, enc.encode(str))
   return base64(signature)
+}
+
+export const RSA_encryption = (pk, msg) => {
+  var encryptor = new JSEncrypt()
+  encryptor.setPublicKey(pk)
+  var cipher = encryptor.encrypt(msg)
+  console.log(cipher)
+  return cipher
 }
 
