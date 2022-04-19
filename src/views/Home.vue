@@ -7,6 +7,11 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+import state from '../state.js'
+if (typeof(state.user.name) != "undefined") {
+  router.push("/friend")
+}
+
 </script>
 
 <template>

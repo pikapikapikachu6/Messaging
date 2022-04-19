@@ -30,10 +30,12 @@ async function sendRegister() {
       console.log("This is register")
       console.log(Cookies.get('pk_'))
       router.push('/login')
+    } else {
+      Swal.fire('Error', 'username has exists', 'error')
     }
   })
   .catch(function (error) {
-    mes = error
+    Swal.fire('Error', 'register failed', 'error')
     console.log(error)
   })
 }

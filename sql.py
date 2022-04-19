@@ -103,12 +103,12 @@ class SQLDatabase():
         data = self.execute(sql_query)
         #data = self.cur.fetchone()[0]
         print("Check useraname:", data)
-        print(len(data))
+        print(data)
         # If our query returns
         if not len(data) == 0:
             return False
         else:
-            print("Check_username:","true")
+            print("Check_username:" + "true")
             return True
 
     # Check login credentials

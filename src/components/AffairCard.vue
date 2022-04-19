@@ -11,7 +11,7 @@ const props = defineProps(['friend'])
     <div class="text-xl sm:text-2xl font-bold mb-1 ">
       {{ props.friend }}
     </div>
-    <button class="text-xl sm:text-2xl font-bold text-black-500 ">
+    <button class="text-xl sm:text-2xl font-bold text-black-500" @click="router.push('/')">
       <chat-icon class="w-6 text-red-500 mr-2"/>
     </button>
   </div>

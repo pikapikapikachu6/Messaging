@@ -168,17 +168,37 @@ def check_friend():
 
 @app.route('/api/add-friend', methods=['POST'])
 def add_friend_to_database():
+    print("add friend API starts:")
     username = request.json['username']
     friend = request.json['friend']
+    print(username)
+    print(friend)
+    if db.add_friend(username, friend):
+        print("add friend finished")
+        print(db.get_friend(username))
+        return "true"
+    return "false"
+
+
+@app.route('/api/get-friend-list', methods=['POST'])
+def get_friend_list():
+    username = request.json['username']
     print(username)
     if db.check_username(username):
         return "false"
     else:
-        if db.add_friend(username, friend):
-            print("This is python get friend")
-            db.get_friend(username)
-            return "true"
-    return "false"
+        res = ''
+        result = db.get_friend(username)
+        if (len(result) == 0): result = ""
+        else:
+            for node in result:
+                print(node)
+                if (len(res) == 0):
+                    res += str(node[0])
+                else:
+                    res = res + ' ' + str(node[0])
+        print("res:" + res)
+    return res
 
 #Generate a certification
 #Store the key in the files
