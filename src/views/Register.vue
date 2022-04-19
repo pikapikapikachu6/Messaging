@@ -4,6 +4,7 @@ import { ArrowCircleRightIcon } from '@heroicons/vue/solid'
 import { HS256, sha256, short, salt } from '../utils/crypto.js'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 const router = useRouter()
 let username = $ref('')
@@ -22,10 +23,10 @@ async function sendRegister() {
     mes = resp.data['result']
     if (mes === 'success') {
       pk = resp.data['public_key']
-      window.localStorage.setItem("pulic_key", JSON.stringify(pk))
-      let test = window.localStorage.getItem("pulic_key")
+      Cookies.remove('pk');
+      Cookies.set('pk', pk, {expires: 7});
       console.log("This is register")
-      console.log(test)
+      console.log(Cookies.get('pk'))
       router.push('/login')
     }
   })

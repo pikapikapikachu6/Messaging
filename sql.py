@@ -86,7 +86,7 @@ class SQLDatabase():
 
         sql_cmd = sql_cmd.format(username=username, friend=friend)
         data = self.execute(sql_cmd)
-        print("add_friend:",)
+        print("add_friend:")
         self.commit()
         return True
     #-----------------------------------------------------------------------------
@@ -103,11 +103,12 @@ class SQLDatabase():
         data = self.execute(sql_query)
         #data = self.cur.fetchone()[0]
         print("Check useraname:", data)
-
+        print(len(data))
         # If our query returns
-        if not data is None:
+        if not len(data) == 0:
             return False
         else:
+            print("Check_username:","true")
             return True
 
     # Check login credentials
@@ -123,10 +124,10 @@ class SQLDatabase():
         data = self.execute(sql_query)
         print("check credentials:", data)
         # If our query returns
-        if not data is None:
-            return True
-        else:
+        if not len(data) == 0:
             return False
+        else:
+            return True
     
     def get_friend(self, username):
         sql_query = """

@@ -2,11 +2,12 @@
 import { LoginIcon, UserAddIcon, UserGroupIcon } from '@heroicons/vue/outline'
 import { ArrowCircleRightIcon, ArrowCircleLeftIcon } from '@heroicons/vue/solid'
 import {HS256, sha256, short, salt, sha256a, RSA_encryption} from '../utils/crypto.js'
+
 import axios from 'axios'
 
 import { useRouter } from 'vue-router'
 import {watchEffect} from "vue";
-
+import Cookies from 'js-cookie'
 import state from '../state.js'
 const user = state.user
 console.log(state.user)
@@ -67,7 +68,7 @@ async function generateRSAKeys () {
 async function pass() {
   console.log('random: ' + random)
   console.log('input: ' + input)
-  pk = window.localStorage.getItem("pulic_key")
+  pk = Cookies.get('pk')
   console.log("This is login")
   console.log(pk)
   //加密

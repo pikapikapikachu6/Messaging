@@ -26,6 +26,7 @@ app = Flask(__name__)
 
 @app.route('/api/register', methods=['POST'])
 def register():
+    print("In register")
     username = request.json['username']
     pwd = request.json['password']
     print(username, pwd)
@@ -44,6 +45,7 @@ def register():
             'result': 'username has exists',
             'public_key': 'None'
         }
+    print("Result:", result['result'], result['public_key'])
     return result
 
 @app.route('/api/login-first', methods=['POST'])
@@ -129,7 +131,7 @@ def login2():
     random_str = username_random[username]
     print("db random_str : ")
     print(random_str)
-    db_pwd = db.get_pwd(username)[0]
+    db_pwd = db.get_pwd(username)[0][0]
     print("db password : ")
     print(db_pwd)
     db_pwd_salt = db_pwd + random_str
@@ -166,6 +168,8 @@ def add_friend_to_database():
         return "false"
     else:
         if db.add_friend(username, friend):
+            print("This is python get friend")
+            db.get_friend(username)
             return "true"
     return "false"
 

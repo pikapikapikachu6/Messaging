@@ -62,8 +62,7 @@ async function addFriend() {
       <input class="shadow appearance-none border rounded py-2 px-2 mt-3" id="username" type="text" placeholder="Enter username" v-model="username">
       <button class="rounded py-2 px-4 shadow-md bg-red-100 ml-3" @click="addFriend()">Add</button>
     </Popper>
-    
-    <input v-model="msg" />
+
     
     <div v-for="a in friend">
       <affair-card :friend="a"></affair-card>
