@@ -76,8 +76,8 @@ async function generateRSAKeys () {
 
 async function getKeys() {
   let keys = await generateRSAKeys()
-  privateKey = keys[0]
-  publicKey = keys[1]
+  privateKey = keys[1]
+  publicKey = keys[0]
 }
 
 

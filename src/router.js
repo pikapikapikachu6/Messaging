@@ -5,7 +5,8 @@ const index = {
   '/login': () => import('./views/Login.vue'),
   '/register': () => import('./views/Register.vue'),
   '/friend': () => import('./views/Friend.vue'),
-  '/chat': () => import('./views/Chat.vue')
+  '/chat': () => import('./views/Chat.vue'),
+  '/test': () => import('./views/test.vue')
 }
 
 const routes = []

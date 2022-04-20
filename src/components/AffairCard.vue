@@ -1,7 +1,8 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { ChatIcon } from '@heroicons/vue/outline'
 const router = useRouter()
+import { ChatIcon } from '@heroicons/vue/outline'
+import axios from 'axios'
 const props = defineProps(['friend'])
 import state from '../state.js'
 if (typeof(state.user.name) == "undefined") {
@@ -11,33 +12,31 @@ let user = state.user
 let friendPK = $ref('')
 let cipher = $ref('')
 
-async function setDate() {
-  await getFriendPk()
-}
-
-function chat() {
-  console.log("chat firend result: " + user.friendPK)
-  setDate()
-  user.friend = props.friend
-  // user.friendPK = friendPK
-  router.push("/chat")
-}
-
 async function getFriendPk() {
   axios.post('/api/getPK', {
     'username': props.friend,
   })
-  .then(resp => {
-    console.log('resp result: ' + resp.data)
-    user.friendPK = resp.data
-    console.log('friend result: ' + user.friendPK)
-  })
-  .catch(function (error) {
-    Swal.fire('Error', 'He is not login', 'error')
-    console.log(error)
-  })
+      .then(resp => {
+        console.log('resp result: ' + resp.data)
+        user.friendPK = resp.data
+        console.log('friend result: ' + user.friendPK)
+      })
+      .catch(function (error) {
+        Swal.fire('Error', 'He is not login', 'error')
+        console.log(error)
+      })
 }
 
+async function setDate() {
+  await getFriendPk()
+}
+
+async function chat() {
+  await getFriendPk()
+  user.friend = props.friend
+  console.log('change the route')
+  await router.push('/chat')
+}
 </script>
 
 <template>

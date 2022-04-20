@@ -28,7 +28,7 @@ async function sendRegister() {
       Cookies.remove(key);
       Cookies.set(key, pk, {expires: 1});
       console.log("This is register")
-      console.log(Cookies.get(key))
+      console.log(Cookies.get('pk_'))
       router.push('/login')
     } else {
       Swal.fire('Error', 'username has exists', 'error')

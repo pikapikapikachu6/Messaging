@@ -304,30 +304,12 @@ def send_message():
         half = int(len(user_msg[user_tut]) / 2)
         user_msg[user_tut] = user_msg[user_tut][half:]
         histroy[user_tut] = histroy[user_tut][half:]
-    print("Send message success")
+
     return jsonify({
         "status": 1,
         "error": "",
         "message": "",
     })
-
-
-@app.route('/api/get_all_message', methods=["POST"])
-def get_all_message():
-    """
-    message
-    """
-    sender_username = request.json['sender_username']
-    receiver_username = request.json['receiver_username']
-    user_tut = check_name(sender_username, receiver_username)
-    message_list = []
-    if user_tut in user_msg:
-        if len(user_msg[user_tut]) == 100:
-            message_list = user_msg[user_tut][90:]
-        else:
-            message_list = user_msg[user_tut]
-    return jsonify(message_list)
-
 
 """
 暂时无视这个，之后有时间再来完善这个方法
@@ -373,6 +355,45 @@ def get_friendPK():
         result = username_public[username]
         print("friend pk: " + result)
     return result
+
+
+# {(sender, receiver): [messages]}
+@app.route('/api/post_mess_DB', methods=['POST'])
+def get_post_mess_db():
+    sender = request.json['sender']
+    receiver = request.json['receiver']
+    message = request.json['message']
+    sen_rec = (sender, receiver)
+    print("username:" + sender)
+    print("receiver:" + receiver)
+    print("message:" + message)
+    print("sen_rec:")
+    print(sen_rec)
+    if sen_rec in user_msg:
+        user_msg[sen_rec].append(message)
+    else:
+        mes = [message]
+        user_msg[sen_rec] = mes
+    print("user_msg:  ")
+    print(user_msg)
+    return "true"
+
+
+@app.route('/api/get_all_message', methods=["POST"])
+def get_receive_message():
+    """
+    message
+    """
+    sender = request.json['sender']
+    receiver = request.json['receiver']
+    sen_rec = (sender, receiver)
+    message_list = []
+    if sen_rec in user_msg:
+        if len(user_msg[sen_rec]) == 100:
+            message_list = user_msg[sen_rec][90:]
+        else:
+            message_list = user_msg[sen_rec]
+    return jsonify(message_list)
 
 
 if __name__ == '__main__':

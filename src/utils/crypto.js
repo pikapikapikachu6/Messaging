@@ -23,9 +23,23 @@ export const RSA_encryption = (pk, msg) => {
     var encryptor = new JSEncrypt()
     encryptor.setPublicKey(pk)
     var cipher = encryptor.encrypt(msg)
-    console.log(cipher)
+    //console.log(cipher)
     return cipher
   }
   return "False"
 }
 
+export const RSA_decryption = (sk, cipher) => {
+  if (sk != undefined) {
+    var decryptor  = new JSEncrypt()
+    decryptor.setPrivateKey(sk)
+    var text = decryptor.decrypt(cipher)
+    //console.log("The RSA msg: ", text)
+    if (text == false) {
+      //console.log("The RSA msg: ", text)
+      return "False"
+    }
+    return text
+  }
+  return "False"
+}
