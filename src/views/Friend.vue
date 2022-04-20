@@ -25,6 +25,7 @@ user = state.user.name
 if (user != null) getFriendList()
 else router.push("/login")
 
+
 async function addFriendToDB() {
   console.log("add friend")
   console.log(addfriend)

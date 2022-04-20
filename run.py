@@ -8,7 +8,6 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5 as Cipher_pksc1_v1_5
 from Crypto.Hash import SHA
 
-
 from flask import Flask, request, abort, jsonify
 import hashlib
 import string
@@ -23,6 +22,7 @@ import sql
 
 # -------------------
 app = Flask(__name__)
+
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -48,6 +48,7 @@ def register():
     print("Result:", result['result'], result['public_key'])
     return result
 
+
 @app.route('/api/login-first', methods=['POST'])
 def login1():
     """
@@ -59,7 +60,7 @@ def login1():
     3.Generate random
     4.return result
     """
-    #Check CA
+    # Check CA
     cipher = request.json['cipher']
     sk = load_key("sk")
     print(cipher)
@@ -191,7 +192,8 @@ def get_friend_list():
     else:
         res = ''
         result = db.get_friend(username)
-        if (len(result) == 0): result = ""
+        if (len(result) == 0):
+            result = ""
         else:
             for node in result:
                 print(node)
@@ -202,8 +204,9 @@ def get_friend_list():
         print("res:" + res)
     return res
 
-#Generate a certification
-#Store the key in the files
+
+# Generate a certification
+# Store the key in the files
 def generate_cert():
     key = RSA.generate(2048)
     private_key = key.export_key()
@@ -216,7 +219,8 @@ def generate_cert():
     with open("cert/public.pem", "wb") as public_file:
         public_file.write(public_key)
 
-#return the public key
+
+# return the public key
 def load_key(key):
     if key == "pk":
         pk = ""
@@ -230,6 +234,7 @@ def load_key(key):
             for line in private_file:
                 sk += line
         return sk
+
 
 def check_cert():
     # Host name should be ours
@@ -248,6 +253,7 @@ def check_cert():
         return False
     return True
 
+
 # RSA decryption
 def decrypt_data(private_key, msg):
     decodeStr = base64.b64decode(msg)
@@ -256,13 +262,14 @@ def decrypt_data(private_key, msg):
     encry_text = prikey.decrypt(decodeStr, b'rsa')
     return encry_text.decode('utf8')
 
+
 histroy = {}  # 存储聊天记录，100条 #{(sender, receiver): [messages]}
 
 # sender, receiver and their messages
-user_msg = {} #{(sender, receiver): [messages]}
+user_msg = {}  # {(sender, receiver): [messages]}
 
 # 已下线用户
-out_msg = {} #{(sender, receiver): [messages]} (sender, receiver) share (receiver, sender)
+out_msg = {}  # {(sender, receiver): [messages]} (sender, receiver) share (receiver, sender)
 
 
 @app.after_request  # 解决CORS跨域请求
@@ -271,6 +278,7 @@ def cors(response):
     if request.method == "OPTIONS":
         response.headers["Access-Control-Allow-Headers"] = "Origin,Content-Type,Cookie,Accept,Token,authorization"
     return response
+
 
 @app.route('/api/send_message', methods=["POST"])
 def send_message():
@@ -281,7 +289,7 @@ def send_message():
     sender_username = request.json['sender_username']
     receiver_username = request.json['receiver_username']
     message = request.json['message']
-    #time = request.json.get("time")
+    # time = request.json.get("time")
 
     user_tut = check_name(sender_username, receiver_username)
     if user_tut in user_msg:
@@ -291,9 +299,9 @@ def send_message():
         user_msg[user_tut] = message
         histroy[user_tut] = message
 
-    #Reduce the message
+    # Reduce the message
     if len(user_msg[user_tut]) > 100:
-        half = int(len(user_msg[user_tut])/2)
+        half = int(len(user_msg[user_tut]) / 2)
         user_msg[user_tut] = user_msg[user_tut][half:]
         histroy[user_tut] = histroy[user_tut][half:]
 
@@ -302,6 +310,7 @@ def send_message():
         "error": "",
         "message": "",
     })
+
 
 @app.route('/api/get_all_message', methods=["POST"])
 def get_all_message():
@@ -336,6 +345,8 @@ def get_new_message():
         "message": new_message_dic
     })
 """
+
+
 def check_name(sender, receiver):
     sender_tut = (sender, receiver)
     receiver_tut = (sender, receiver)
@@ -344,10 +355,24 @@ def check_name(sender, receiver):
         return receiver_tut
     return sender_tut
 
+
+@app.route('/api/getPK', methods=['POST'])
+def get_friendPK():
+    print(username_public)
+    username = request.json['username']
+    print("username:" + username)
+    if db.check_username(username):
+        return "false"
+    else:
+        result = username_public[username]
+        print("friend pk: " + result)
+    return result
+
+
 if __name__ == '__main__':
     db = sql.SQLDatabase()
     db.database_setup()
-    username_random = {} #The username with corresponding random string 
-    username_public = {} #The useranme with corresponding public key
+    username_random = {}  # The username with corresponding random string
+    username_public = {}  # The useranme with corresponding public key
     generate_cert()
     app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
