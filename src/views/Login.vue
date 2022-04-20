@@ -1,18 +1,25 @@
 <script setup>
 import { LoginIcon, UserAddIcon, UserGroupIcon } from '@heroicons/vue/outline'
 import { ArrowCircleRightIcon, ArrowCircleLeftIcon } from '@heroicons/vue/solid'
-import {HS256, sha256, short, salt, sha256a, RSA_encryption} from '../utils/crypto.js'
+import {sha256, short, salt, RSA_encryption} from '../utils/crypto.js'
 
 import axios from 'axios'
 
 import { useRouter } from 'vue-router'
+const router = useRouter()
+
 import {watchEffect} from "vue";
+let inputElement = $ref()
+watchEffect(() => {
+  if (inputElement) inputElement.focus()
+})
+
 import Cookies from 'js-cookie'
 import state from '../state.js'
 const user = state.user
+if (state.user.name) router.push("/friend")
 console.log(state.user)
 
-const router = useRouter()
 
 let input = $ref('')
 let random = $ref('')
@@ -20,7 +27,6 @@ let random = $ref('')
 let username = $ref('')
 let pwd = $ref('')
 let mes = $ref('')
-let msg = $ref('')
 
 let privateKey = $ref('')
 let publicKey = $ref('')
@@ -31,13 +37,15 @@ let pk = $ref('')
 let sk = $ref('')
 let key = $ref('')
 
-let inputElement = $ref()
-watchEffect(() => {
-  if (inputElement) inputElement.focus()
-})
 
 function success (username) {
   user.name = username
+  user.pk = publicKey
+  user.sk = privateKey
+  console.log('privateKey:' + privateKey)
+  console.log('publicKey:' + publicKey )
+  console.log('pk:' + user.pk)
+  console.log('sk:' + user.sk )
   console.log(state.user)
   router.push('/friend')
 }
@@ -59,50 +67,30 @@ async function generateRSAKeys () {
     }, true, ['encrypt', 'decrypt'])
     const sk = RSA2text(await S.exportKey('pkcs8', k.privateKey))
     const pk = RSA2text(await S.exportKey('spki', k.publicKey))
-    return { pk, sk }
+    return [pk, sk]
   } catch (e) {
     console.error(e)
     return null
   }
 }
 
+async function getKeys() {
+  let keys = await generateRSAKeys()
+  privateKey = keys[0]
+  publicKey = keys[1]
+}
+
+
 async function pass() {
-  console.log('random: ' + random)
-  console.log('input: ' + input)
-  key = 'pk_' + input
-  console.log(key)
-  console.log(Cookies.get())
-  pk = Cookies.get(key)
-  console.log("This is login")
-  console.log(pk)
-  //加密
-  var msg = "I am client"
-  console.log(pk)
-  var cipher = RSA_encryption(pk, msg)
-  //这里需要显示一个CA不通过的提示。 这个算是根本找不到证书
-  if (cipher == "False") {
-    return
-  }
-    console.log(cipher)
-    if (!input) return
-    if (!random) { // first
-        console.log('random: ' + random)
-    console.log('input: ' + input)
+  if (!input) return
+  if (!random) { // first
     key = 'pk_' + input
-    console.log(key)
-    console.log(Cookies.get())
     pk = Cookies.get(key)
-    console.log("This is login")
-    console.log(pk)
-    //加密
-    var msg = "I am client"
-    console.log(pk)
-    var cipher = RSA_encryption(pk, msg)
-    //这里需要显示一个CA不通过的提示。 这个算是根本找不到证书
+    const msg = "I am client";
+    const cipher = RSA_encryption(pk, msg);
     if (cipher == "False") {
-      return
+      Swal.fire('Error', 'CA error', 'error')
     }
-    console.log(cipher)
 
     axios.post('/api/login-first', {
       'username': input,
@@ -110,9 +98,8 @@ async function pass() {
     })
     .then(function (response) {
       checkResult = response.data['result']
-      //这里也需要显示一个CA不通过的提示， 这个算是证书错误
       if (checkResult == "Is not a Certificate Authority"){
-        return
+        Swal.fire('Error', 'CA error', 'error')
       }
       if (checkResult == true) {
         username = response.data['username']
@@ -124,11 +111,15 @@ async function pass() {
     .catch(function (error) {
       console.log(error);
     });
-  } else {
+
+  } else { //second
+    console.log('second time here:')
     if (username != 'there is error') {
+      await getKeys()
       axios.post('/api/login-second', {
         'username': username,
-        'password':  await sha256(short(await sha256(input + salt)) + random)
+        'password':  await sha256(short(await sha256(input + salt)) + random),
+        'public_key': publicKey
       })
       .then(function (response) {
         mes = response.data

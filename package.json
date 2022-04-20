@@ -11,9 +11,11 @@
     "@popperjs/core": "^2.11.5",
     "axios": "^0.26.0",
     "element-plus": "^2.1.9",
+    "js-cookie": "^3.0.1",
+    "jsencrypt": "^3.2.1",
+    "sass": "^1.50.0",
     "vue": "^3.2.31",
-    "vue-router": "^4.0.14",
-    "sass": "^1.50.0"
+    "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.1",

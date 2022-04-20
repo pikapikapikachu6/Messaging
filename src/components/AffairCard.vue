@@ -3,6 +3,16 @@ import { useRouter } from 'vue-router'
 import { ChatIcon } from '@heroicons/vue/outline'
 const router = useRouter()
 const props = defineProps(['friend'])
+import state from '../state.js'
+if (typeof(state.user.name) == "undefined") {
+  router.push("/login")
+}
+let user = state.user
+
+function chat() {
+  user.friend = props.friend
+  router.push("/chat")
+}
 
 </script>
 
@@ -11,7 +21,7 @@ const props = defineProps(['friend'])
     <div class="text-xl sm:text-2xl font-bold mb-1 ">
       {{ props.friend }}
     </div>
-    <button class="text-xl sm:text-2xl font-bold text-black-500 ">
+    <button class="text-xl sm:text-2xl font-bold text-black-500" @click="chat">
       <chat-icon class="w-6 text-red-500 mr-2"/>
     </button>
   </div>

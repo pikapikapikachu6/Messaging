@@ -131,8 +131,10 @@ def login2():
     print(username)
     print("db password : ")
     print(user_pwd)
-    # public_key = request.json['public_key']
-    # username_public[username] = public_key
+    public_key = request.json['public_key']
+    username_public[username] = public_key
+    print("db public key array list: ")
+    print(username_public)
 
     # encry
     random_str = username_random[username]
@@ -168,17 +170,37 @@ def check_friend():
 
 @app.route('/api/add-friend', methods=['POST'])
 def add_friend_to_database():
+    print("add friend API starts:")
     username = request.json['username']
     friend = request.json['friend']
+    print(username)
+    print(friend)
+    if db.add_friend(username, friend):
+        print("add friend finished")
+        print(db.get_friend(username))
+        return "true"
+    return "false"
+
+
+@app.route('/api/get-friend-list', methods=['POST'])
+def get_friend_list():
+    username = request.json['username']
     print(username)
     if db.check_username(username):
         return "false"
     else:
-        if db.add_friend(username, friend):
-            print("This is python get friend")
-            db.get_friend(username)
-            return "true"
-    return "false"
+        res = ''
+        result = db.get_friend(username)
+        if (len(result) == 0): result = ""
+        else:
+            for node in result:
+                print(node)
+                if (len(res) == 0):
+                    res += str(node[0])
+                else:
+                    res = res + ' ' + str(node[0])
+        print("res:" + res)
+    return res
 
 #Generate a certification
 #Store the key in the files
@@ -274,7 +296,7 @@ def send_message():
         half = int(len(user_msg[user_tut])/2)
         user_msg[user_tut] = user_msg[user_tut][half:]
         histroy[user_tut] = histroy[user_tut][half:]
-
+    print("Send message success")
     return jsonify({
         "status": 1,
         "error": "",
@@ -286,10 +308,16 @@ def get_all_message():
     """
     message
     """
-    global histroy
-    if len(histroy) == 100:
-        histroy = histroy[90:101]
-    return jsonify(histroy)
+    sender_username = request.json['sender_username']
+    receiver_username = request.json['receiver_username']
+    user_tut = check_name(sender_username, receiver_username)
+    message_list = []
+    if user_tut in user_msg:
+        if len(user_msg[user_tut]) == 100:
+            message_list = user_msg[user_tut][90:]
+        else:
+            message_list = user_msg[user_tut]
+    return jsonify(message_list)
 
 
 """

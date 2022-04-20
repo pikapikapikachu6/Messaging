@@ -1,7 +1,7 @@
 <script setup>
 import { LoginIcon, UserAddIcon, UserGroupIcon } from '@heroicons/vue/outline'
 import { ArrowCircleRightIcon } from '@heroicons/vue/solid'
-import { HS256, sha256, short, salt } from '../utils/crypto.js'
+import { sha256, short, salt } from '../utils/crypto.js'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import Cookies from 'js-cookie'
@@ -30,10 +30,12 @@ async function sendRegister() {
       console.log("This is register")
       console.log(Cookies.get(key))
       router.push('/login')
+    } else {
+      Swal.fire('Error', 'username has exists', 'error')
     }
   })
   .catch(function (error) {
-    mes = error
+    Swal.fire('Error', 'register failed', 'error')
     console.log(error)
   })
 }
