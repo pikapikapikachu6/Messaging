@@ -70,6 +70,8 @@ async function pass() {
   console.log('random: ' + random)
   console.log('input: ' + input)
   key = 'pk_' + input
+  console.log(key)
+  console.log(Cookies.get())
   pk = Cookies.get(key)
   console.log("This is login")
   console.log(pk)
@@ -81,9 +83,27 @@ async function pass() {
   if (cipher == "False") {
     return
   }
-  console.log(cipher)
-  if (!input) return
-  if (!random) { // first
+    console.log(cipher)
+    if (!input) return
+    if (!random) { // first
+        console.log('random: ' + random)
+    console.log('input: ' + input)
+    key = 'pk_' + input
+    console.log(key)
+    console.log(Cookies.get())
+    pk = Cookies.get(key)
+    console.log("This is login")
+    console.log(pk)
+    //加密
+    var msg = "I am client"
+    console.log(pk)
+    var cipher = RSA_encryption(pk, msg)
+    //这里需要显示一个CA不通过的提示。 这个算是根本找不到证书
+    if (cipher == "False") {
+      return
+    }
+    console.log(cipher)
+
     axios.post('/api/login-first', {
       'username': input,
       'cipher':cipher

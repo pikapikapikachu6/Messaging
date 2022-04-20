@@ -28,7 +28,7 @@ async function sendRegister() {
       Cookies.remove(key);
       Cookies.set(key, pk, {expires: 1});
       console.log("This is register")
-      console.log(Cookies.get('pk_'))
+      console.log(Cookies.get(key))
       router.push('/login')
     }
   })
