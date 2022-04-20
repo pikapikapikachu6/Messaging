@@ -20,15 +20,15 @@ async function sendRegister() {
     'password': short(await sha256(pwd + salt))
   })
   .then(resp => {
-    console.log(resp)
+    // console.log(resp)
     mes = resp.data['result']
     if (mes === 'success') {
       pk = resp.data['public_key']
       key = 'pk_' + username
       Cookies.remove(key);
       Cookies.set(key, pk, {expires: 1});
-      console.log("This is register")
-      console.log(Cookies.get('pk_'))
+      // console.log("This is register")
+      // console.log(Cookies.get('pk_'))
       router.push('/login')
     } else {
       Swal.fire('Error', 'username has exists', 'error')
@@ -36,7 +36,7 @@ async function sendRegister() {
   })
   .catch(function (error) {
     Swal.fire('Error', 'register failed', 'error')
-    console.log(error)
+    // console.log(error)
   })
 }
 

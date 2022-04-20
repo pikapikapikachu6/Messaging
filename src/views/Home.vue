@@ -22,7 +22,8 @@ if (typeof(state.user.name) != "undefined") {
     <div class="ml-96 mr-96 font-medium grid grid-cols-3 place-items-center">
       <button class="card" @click="router.push('/register')"><user-add-icon class="w-6 text-red-500 mr-2"/> Register</button>
       <button class="card" @click="router.push('/login')"><login-icon class="w-6 text-purple-500 mr-2"/> Login</button>
-      <button class="card" @click="router.push('/admin/sas')"><user-group-icon class="w-6 text-orange-500 mr-2"/>About</button>
+      <button class="card" @click="router.push('/about')"><user-group-icon class="w-6 text-orange-500 mr-2"/>About
+      </button>
     </div>
     <img style="transition: all 0.5s ease;" src="chat.svg" class="absolute w-1/3 group-hover:left-0 left-1/3">
  </div>

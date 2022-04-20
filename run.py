@@ -26,26 +26,25 @@ app = Flask(__name__)
 
 @app.route('/api/register', methods=['POST'])
 def register():
-    print("In register")
+    # print("In register:")
     username = request.json['username']
     pwd = request.json['password']
-    print(username, pwd)
+    # print('username: ' + username)
+    # print('pwd: ' + pwd)
     if db.check_username(username):
         pk = load_key("pk")
-        print(pk)
-        print("Success check username")
+        # print("Check username is unique successfully!")
         db.add_user(username, pwd)
         result = {
             'result': 'success',
             'public_key': pk
         }
-        print("success")
     else:
         result = {
             'result': 'username has exists',
             'public_key': 'None'
         }
-    print("Result:", result['result'], result['public_key'])
+    # print("Result:", result['result'], result['public_key'])
     return result
 
 
@@ -93,26 +92,6 @@ def login1():
             'random': random_str
         }
         return result
-
-    # if check_cert():
-    #     print("Correct")
-    #     username = request.json['username']
-    #     random_str = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
-    #     username_random[username] = random_str
-    #     print(username, random_str, username_random)
-    #     result = {
-    #         'result': True,
-    #         'username': username,
-    #         'random': random_str
-    #     }
-    #     return result
-    # else:
-    #     result = {
-    #         'result': False,
-    #         'username': None,
-    #         'random': None
-    #     }
-    #     return result
 
 
 @app.route('/api/login-second', methods=['POST'])

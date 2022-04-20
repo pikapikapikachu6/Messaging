@@ -90,15 +90,9 @@ async function sendMessFunc() {
         friend }} </h1>
     <button class="fixed top-10 left-5 w-20 rounded py-2 px-4 shadow-md bg-red-300 hover:shadow-lg m-2 transition-all"
             @click="router.push('/friend')"> return </button>
-    <div class="bg-lime-100 flex-grow mx-24" v-for="x in sendMess">
-<!--      <div v-for="node1 in sendMess">{{ node1 }} </div>-->
-<!--      <div v-for="node2 in receiveMess">{{ node2 }} </div>-->
-        {{ x }}
-    </div>
-    <div class="bg-lime-100 flex-grow mx-24" v-for="y in receiveMess">
-      <!--      <div v-for="node1 in sendMess">{{ node1 }} </div>-->
-      <!--      <div v-for="node2 in receiveMess">{{ node2 }} </div>-->
-      {{ y }}
+    <div class="bg-lime-100 flex-grow mx-24 overflow-auto">
+      <p v-for="x in sendMess">{{ x }}</p>
+      <p v-for="y in receiveMess">{{ y }}</p>
     </div>
     <div class="relative mx-24 flex flex-wrap items-stretch h-16 mt-10 mb-10">
       <input type="text"
