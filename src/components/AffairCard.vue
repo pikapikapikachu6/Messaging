@@ -8,10 +8,34 @@ if (typeof(state.user.name) == "undefined") {
   router.push("/login")
 }
 let user = state.user
+let friendPK = $ref('')
+let cipher = $ref('')
+
+async function setDate() {
+  await getFriendPk()
+}
 
 function chat() {
+  console.log("chat firend result: " + user.friendPK)
+  setDate()
   user.friend = props.friend
+  // user.friendPK = friendPK
   router.push("/chat")
+}
+
+async function getFriendPk() {
+  axios.post('/api/getPK', {
+    'username': props.friend,
+  })
+  .then(resp => {
+    console.log('resp result: ' + resp.data)
+    user.friendPK = resp.data
+    console.log('friend result: ' + user.friendPK)
+  })
+  .catch(function (error) {
+    Swal.fire('Error', 'He is not login', 'error')
+    console.log(error)
+  })
 }
 
 </script>

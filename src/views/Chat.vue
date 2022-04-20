@@ -1,7 +1,11 @@
 <script setup>
-import { useRouter } from 'vue-router'
 import { ChevronDoubleUpIcon } from '@heroicons/vue/outline'
+import { useRouter } from 'vue-router'
 const router = useRouter()
+
+import {sha256, short, salt, RSA_encryption} from '../utils/crypto.js'
+
+import axios from 'axios'
 import state from '../state.js'
 import axios from 'axios'
 if (typeof(state.user.name) == "undefined") {
@@ -14,15 +18,24 @@ let message =$ref()
 
 //这个部分会把消息发给server
 async function sendMess() {
-  if (!input) return
+
+  console.log('friend here: ' + friendPK)
+  console.log('current: '+ current)
+  console.log('friend: ' + friend)
+  cipher = RSA_encryption(friendPK, current)
+  console.log('cipher: ' + cipher)
+
+  if (!current) return
   axios.post('/api/send_message', {
       'sender_username': user,
       'receiver_username': friend,
-      'message':input
+      'message':cipher
     }).catch(function (error) {
       console.log(error);
     });
-}
+let current = $ref('')
+let cipher = $ref('')
+let friendPK = user.friendPK
 
 async function get_all_message() {
   if (!input) return
@@ -43,6 +56,7 @@ async function get_all_message() {
 </script>
 
 <template>
+  {{ cipher }}
   <div className="flex flex-col h-screen bg-gradient-to-b from-blue-100 to-purple-100">
     <h1 className="text-4xl font-medium grid grid-cols-1 place-items-center h-32 text-rose-700"> chat with {{
         friend }} </h1>
