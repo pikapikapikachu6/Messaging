@@ -17,7 +17,7 @@ watchEffect(() => {
 import Cookies from 'js-cookie'
 import state from '../state.js'
 const user = state.user
-if (state.user.name) router.push("/friend")
+if (state.user.name) router.push("/home")
 console.log(state.user)
 
 
@@ -47,7 +47,7 @@ function success (username) {
   console.log('pk:' + user.pk)
   console.log('sk:' + user.sk )
   console.log(state.user)
-  router.push('/friend')
+  router.push('/homePage')
 }
 
 async function generateRSAKeys () {

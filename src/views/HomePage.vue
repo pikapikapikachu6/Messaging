@@ -8,10 +8,10 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-import state from '../state.js'
-if (typeof(state.user.name) != "undefined") {
-  router.push("/friend")
-}
+// import state from '../state.js'
+// if (typeof(state.user.name) != "undefined") {
+//   router.push("/friend")
+// }
 
 </script>
 
@@ -20,9 +20,8 @@ if (typeof(state.user.name) != "undefined") {
   <div class="h-screen bg-gradient-to-b from-blue-100 to-purple-100">
     <h1 class="text-5xl font-medium grid grid-cols-1 place-items-center h-72"> Messaging tool </h1>
 
-    <div class="ml-96 mr-96 font-medium grid grid-cols-4 place-items-center">
-      <button class="card" @click="router.push('/register')"><user-add-icon class="w-6 text-red-500 mr-2"/> Register</button>
-      <button class="card" @click="router.push('/login')"><login-icon class="w-6 text-purple-500 mr-2"/> Login</button>
+    <div class="ml-96 mr-96 font-medium grid grid-cols-3 place-items-center">
+      <button class="card" @click="router.push('/Friend')"><login-icon class="w-6 text-purple-500 mr-2"/> Messaging</button>
       <button class="card" @click="router.push('/forum')"><annotation-icon class="w-6 text-blue-500 mr-2"/> Forum</button>
       <button class="card" @click="router.push('/about')"><user-group-icon class="w-6 text-orange-500 mr-2"/>About
       </button>

@@ -111,6 +111,8 @@ function logout() {
 
 <template>
   <div class="h-screen bg-gradient-to-b from-blue-100 to-purple-100">
+    <button class="fixed top-10 left-5 w-20 rounded py-2 px-4 shadow-md bg-red-300 hover:shadow-lg m-2 transition-all"
+            @click="router.push('/homePage')"> return </button>
     <h1 class="text-4xl font-medium grid grid-cols-1 place-items-center h-40 text-rose-700"> Welcome to Messaging Tool ~ </h1>
     <h1 class="text-3xl font-medium grid grid-cols-1 place-items-center text-amber-400"> Friend List </h1>
     <div class="flex justify-center">

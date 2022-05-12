@@ -7,7 +7,9 @@ const index = {
   '/friend': () => import('./views/Friend.vue'),
   '/chat': () => import('./views/Chat.vue'),
   '/test': () => import('./views/test.vue'),
-  '/about': () => import('./views/About.vue')
+  '/about': () => import('./views/About.vue'),
+  '/forum': () => import('./views/Forum.vue'),
+  '/homePage': () => import('./views/HomePage.vue')
 }
 
 const routes = []
