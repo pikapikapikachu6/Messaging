@@ -1,20 +1,17 @@
-from asyncio import tasks
-from crypt import methods
-import queue
-from random import getrandbits
+# -*- coding: UTF-8 -*-
 import base64
-import uuid
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_v1_5 as Cipher_pksc1_v1_5
-from Crypto.Hash import SHA
-
-from flask import Flask, request, abort, jsonify
 import hashlib
-import string
-import random
-import ssl
-import socket
 import os
+import random
+import re
+import socket
+import ssl
+import string
+from turtle import pos
+
+from Crypto.Cipher import PKCS1_v1_5 as Cipher_pksc1_v1_5
+from Crypto.PublicKey import RSA
+from flask import Flask, request, jsonify
 
 # -----------------
 # Own python file
@@ -184,8 +181,8 @@ def get_friend_list():
     return res
 
 
-# Generate a certification
-# Store the key in the files
+# # Generate a certification
+# # Store the key in the files
 def generate_cert():
     key = RSA.generate(2048)
     private_key = key.export_key()
@@ -374,11 +371,32 @@ def get_receive_message():
             message_list = user_msg[sen_rec]
     return jsonify(message_list)
 
+@app.route('/api/create-post', methods=["POST"])
+def create_post():
+    title = request.json['title']
+    content = request.json['content']
+    creator = request.json['creator']
+    post_content = (title, content, creator)
+    id = len(post)
+    post[id] = post_content
+    print(title)
+    print(content)
+    print(creator)
+    print(post)
+    return "true"
+
+@app.route('/api/get-post', methods=["GET"])
+def get_post():
+    return post
+
+
+
 
 if __name__ == '__main__':
     db = sql.SQLDatabase()
     db.database_setup()
     username_random = {}  # The username with corresponding random string
     username_public = {}  # The useranme with corresponding public key
+    post = {}
     generate_cert()
     app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
