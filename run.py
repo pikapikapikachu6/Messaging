@@ -384,8 +384,11 @@ def create_post():
     print(content)
     print(creator)
     print(post)
-
-    return "true"
+    result = {
+            'result': "true",
+            'id': id,
+        }
+    return result
 
 @app.route('/api/get-post', methods=["GET"])
 def get_post():
@@ -440,7 +443,6 @@ def add_comment():
     if post_id in post_comment:
         post_comment[post_id].append(new_comment)
     else:
-        print("?")
         post_comment[post_id] = [new_comment]
     print(post_comment)
     print(post_comment[post_id])
@@ -452,9 +454,9 @@ def add_comment():
 def get_comment():
     id = request.json['id']
     if id == -1:
-        return post_comment
+        return {-1:post_comment}
     id = int(id)
-    return {id:post_comment[id]}
+    return {id : post_comment[id]}
 
 
 if __name__ == '__main__':

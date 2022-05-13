@@ -12,6 +12,7 @@ let postContent = $ref()
 
 import state from '../state.js'
 let user = state.user.name
+let id =state.user.id
 let file
 let postList = $ref()
 
@@ -31,6 +32,9 @@ async function createPost() {
             'creator': user
         })
         .then(async function(res) {
+            console.log('res:' + res.data)
+            id = res.data['id']
+            console.log("The id is :" + id)
             console.log('res:' + res.data)
             await getPost()
             postTitle = null

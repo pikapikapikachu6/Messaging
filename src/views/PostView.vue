@@ -16,8 +16,8 @@ let creator = user.postCreator
 let comments = $ref()
 let name = state.user.name
 let information = $ref()
-let id = $ref()
-id = -1
+let id = state.user.id
+
 async function createComment() {
     console.log("Create")
     console.log(creator);
@@ -47,7 +47,7 @@ async function getComment() {
         })
         .then(async function(res) {
             comments = res.data
-            console.log("This is comment")
+            console.log("This is id:" + id)
             console.log(comments)
             //console.log("Hello")
         })
@@ -71,7 +71,7 @@ async function getComment() {
             <div class="border-2 border-blue-500 w-4/5 overflow-auto" style="height: 200px; position: absolute;
              left: 50%; top: 55%; transform: translateX(-50%);">
                 <h1 class="text-3xl font-medium grid grid-cols-1 place-items-center text-blue-400"> Comments </h1>
-                <template> {{ getComment() }}</template>
+            <template> {{ getComment() }}</template>
             <div v-for="comment_list in comments" v-if="comments != null">
                 <div v-for=" comments in comment_list" v-if="comment_list != null">
                     {{comments[0]}} : {{comments[1]}}
