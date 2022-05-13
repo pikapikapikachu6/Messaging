@@ -89,6 +89,20 @@ class SQLDatabase():
         print("add_friend:")
         self.commit()
         return True
+
+     # Add a user to the database
+    def add_post(self, username, friend):
+        sql_cmd = """
+                INSERT INTO Users(username, friend)
+                VALUES('{username}', '{friend}')
+            """
+
+        sql_cmd = sql_cmd.format(username=username, friend=friend)
+        data = self.execute(sql_cmd)
+        print("add_friend:")
+        self.commit()
+        return True
+
     #-----------------------------------------------------------------------------
 
     # Check login credentials

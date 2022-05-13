@@ -8,6 +8,7 @@ import socket
 import ssl
 import string
 from turtle import pos
+from xml.etree.ElementTree import Comment
 
 from Crypto.Cipher import PKCS1_v1_5 as Cipher_pksc1_v1_5
 from Crypto.PublicKey import RSA
@@ -383,20 +384,77 @@ def create_post():
     print(content)
     print(creator)
     print(post)
+
     return "true"
 
 @app.route('/api/get-post', methods=["GET"])
 def get_post():
     return post
 
+@app.route('/api/delete-post', methods=["POST"])
+def delete_post():
+    #find id, delete id, re-arrange
+    title = request.json['title']
+    content = request.json['content']
+    creator = request.json['creator']
+    post_content = (title, content, creator)
+    post_id = -1
+    #find id
+    for key, value in post.items():
+        print(key)
+        if value == post_content:
+            post_id = key
+            break
+    #delete id.
+    if post_id != -1:
+        post.pop(post_id)
+        #re-arrange
+        new_post = {}
+        for id, content in post.items():
+            new_id = len(new_post)
+            new_post[new_id] = content
+        post = new_post
+    return "true"
+
 
 @app.route('/api/add-comment', methods=["POST"])
 def add_comment():
     title = request.json['title']
-    content = request.json['content']
-    creator = request.json['creator']
+    if request.json['content'] == None:
+        content = None
+    else:
+        content = request.json['content'] #the post information
+    creator = request.json['creator'] #The post author
+    comment = request.json['comment'] #The comment content
+    name = request.json['name'] #The commenter name
+    post_content = (title, content, creator)
+    post_id = -1
+    #find id
+    for key, value in post.items():
+        print(key)
+        if value == post_content:
+            post_id = key
+            break
+    #add information into the comment
+    new_comment = (name, comment)
+    if post_id in post_comment:
+        post_comment[post_id].append(new_comment)
+    else:
+        print("?")
+        post_comment[post_id] = [new_comment]
+    print(post_comment)
+    print(post_comment[post_id])
+    #return the comment
+    id_str = str(post_id)
+    return id_str
     
-
+@app.route('/api/get-comment', methods=["POST"])
+def get_comment():
+    id = request.json['id']
+    if id == -1:
+        return post_comment
+    id = int(id)
+    return {id:post_comment[id]}
 
 
 if __name__ == '__main__':
@@ -405,5 +463,6 @@ if __name__ == '__main__':
     username_random = {}  # The username with corresponding random string
     username_public = {}  # The useranme with corresponding public key
     post = {}
+    post_comment = {} # post_id : [(author, comment information)] eg. 1: [(Tom, "Hello"), (Tom, "World")] 
     generate_cert()
     app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
