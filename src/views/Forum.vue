@@ -32,7 +32,7 @@ async function createPost() {
         })
         .then(async function(res) {
             console.log('res:' + res.data)
-            getPost()
+            await getPost()
             postTitle = null
             postContent = null
         })
@@ -58,6 +58,7 @@ async function getPost() {
         <button class="fixed top-10 left-5 w-20 rounded py-2 px-4 shadow-md bg-red-300 hover:shadow-lg m-2 transition-all" @click="router.push('/homePage')"> return </button>
         <h1 class="text-4xl font-medium grid grid-cols-1 place-items-center text-amber-400 h-24"> Post List </h1>
         <div class="overflow-auto" style="height: 450px">
+            <template> {{ getPost() }} </template>
             <div v-for="a in postList" v-if="postList != null">
                 <post-card :post="a" v-if="a != 'None'"></post-card>
             </div>

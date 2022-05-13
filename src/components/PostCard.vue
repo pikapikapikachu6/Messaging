@@ -12,7 +12,22 @@ for (let a in post) {
   postContent[a] = post[a]
 }
 let title = postContent[0]
+let content = postContent[1]
 let creator = postContent[2]
+
+import state from '../state.js'
+if (typeof(state.user.name) == "undefined") {
+  router.push("/login")
+}
+let user = state.user
+
+function view() {
+  user.postTitle = title
+  user.postContent = content
+  user.postCreator = creator
+  router.push("./postView")
+}
+
 </script>
 
 <template>
@@ -22,7 +37,7 @@ let creator = postContent[2]
       <div class="text-blue-500 ml-24"> {{creator}} </div>
     </button>
     <div class="grid grid-cols-2">
-      <button class="rounded-full py-2 px-4 shadow-md bg-red-300 hover:shadow-lg m-2 transition-all" @click="delete">
+      <button class="rounded-full py-2 px-4 shadow-md bg-red-300 hover:shadow-lg m-2 transition-all" @click="delete" v-if="user.admin==1">
         delete
       </button>
       <button class="rounded-full py-2 px-4 shadow-md bg-red-300 hover:shadow-lg m-2 transition-all" @click="view">

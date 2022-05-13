@@ -71,16 +71,6 @@ async function sendMessFunc() {
   await getAllMess()
 }
 
-// const timer = $ref(null);
-// onMounted(() => {
-//   timer.value = setInterval(async () => {
-//     await getAllMess();
-//   }, 1000);
-// });
-// onUnmounted(() => {
-//   clearInterval(timer.value);
-// });
-
 
 </script>
 

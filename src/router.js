@@ -9,7 +9,8 @@ const index = {
   '/test': () => import('./views/test.vue'),
   '/about': () => import('./views/About.vue'),
   '/forum': () => import('./views/Forum.vue'),
-  '/homePage': () => import('./views/HomePage.vue')
+  '/homePage': () => import('./views/HomePage.vue'),
+  '/postView': () => import('./views/PostView.vue')
 }
 
 const routes = []

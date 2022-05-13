@@ -390,6 +390,13 @@ def get_post():
     return post
 
 
+@app.route('/api/add-comment', methods=["POST"])
+def add_comment():
+    title = request.json['title']
+    content = request.json['content']
+    creator = request.json['creator']
+    
+
 
 
 if __name__ == '__main__':
