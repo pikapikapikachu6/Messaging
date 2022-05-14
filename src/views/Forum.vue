@@ -39,6 +39,7 @@ async function createPost() {
             await getPost()
             postTitle = null
             postContent = null
+            Swal.fire('Success', 'Create Success', 'success')
         })
         .catch(function(error) {
             console.log(error);
@@ -55,6 +56,8 @@ async function getPost() {
             console.log(error);
         });
 }
+
+
 </script>
 
 <template>

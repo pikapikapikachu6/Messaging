@@ -32,7 +32,7 @@ function view() {
 
 <template>
   <div class="py-4 px-20 flex justify-between my-3 rounded-full mx-72 bg-white shadow all-transition hover:shadow-md" v-if="props.post!=null">
-    <button class="text-xl sm:text-2xl font-bold mb-1 grid grid-cols-2 mt-3"> 
+    <button class="text-xl sm:text-2xl font-bold mb-1 grid grid-cols-2 mt-3" @click="view"> 
       <div class="text-black"> {{title}} </div>
       <div class="text-blue-500 ml-24"> {{creator}} </div>
     </button>
