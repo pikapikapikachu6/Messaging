@@ -28,6 +28,20 @@ function view() {
   router.push("./postView")
 }
 
+async function deletePost() {
+  axios.post('/api/remove-post', {
+            'title': title,
+            'content': content,
+            'creator': creator
+        })
+        .then(async function(res) {
+          Swal.fire('Success', 'Delete Successfully', 'success')
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+}
+
 </script>
 
 <template>
@@ -37,7 +51,7 @@ function view() {
       <div class="text-blue-500 ml-24"> {{creator}} </div>
     </button>
     <div class="grid grid-cols-2">
-      <button class="rounded-full py-2 px-4 shadow-md bg-red-300 hover:shadow-lg m-2 transition-all" @click="delete" v-if="user.admin==1">
+      <button class="rounded-full py-2 px-4 shadow-md bg-red-300 hover:shadow-lg m-2 transition-all" @click="deletePost" v-if="user.admin==1">
         delete
       </button>
       <button class="rounded-full py-2 px-4 shadow-md bg-red-300 hover:shadow-lg m-2 transition-all" @click="view">

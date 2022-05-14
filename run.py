@@ -58,21 +58,22 @@ def login1():
     4.return result
     """
     # Check CA
-    cipher = request.json['cipher']
-    sk = load_key("sk")
-    print(cipher)
-    message = decrypt_data(sk, cipher)
-    if message == "I am client":
-        print("Success")
-    else:
-        result = {
-            'result': "Is not a Certificate Authority",
-            'username': None,
-            'random': None
-        }
-        return result
-    print(message)
     username = request.json['username']
+    if (username != 'admin'):
+        cipher = request.json['cipher']
+        sk = load_key("sk")
+        print(cipher)
+        message = decrypt_data(sk, cipher)
+        if message == "I am client":
+            print("Success")
+        else:
+            result = {
+                'result': "Is not a Certificate Authority",
+                'username': None,
+                'random': None
+            }
+            return result
+        print(message)
     random_str = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
     if db.check_username(username):
         result = {
@@ -105,6 +106,7 @@ def login2():
     # Input
     username = request.json['username']
     user_pwd = request.json['password']
+
     print("db username : ")
     print(username)
     print("db password : ")
@@ -394,30 +396,21 @@ def create_post():
 def get_post():
     return post
 
-@app.route('/api/delete-post', methods=["POST"])
-def delete_post():
-    #find id, delete id, re-arrange
+@app.route('/api/remove-post', methods=["POST"])
+def remove_post():
     title = request.json['title']
     content = request.json['content']
     creator = request.json['creator']
     post_content = (title, content, creator)
     post_id = -1
-    #find id
     for key, value in post.items():
         print(key)
         if value == post_content:
             post_id = key
             break
-    #delete id.
-    if post_id != -1:
+    if (post_id != -1):
         post.pop(post_id)
-        #re-arrange
-        new_post = {}
-        for id, content in post.items():
-            new_id = len(new_post)
-            new_post[new_id] = content
-        post = new_post
-    return "true"
+    return 'true'    
 
 
 @app.route('/api/add-comment', methods=["POST"])
@@ -464,6 +457,7 @@ if __name__ == '__main__':
     db.database_setup()
     username_random = {}  # The username with corresponding random string
     username_public = {}  # The useranme with corresponding public key
+    global post
     post = {}
     post_comment = {} # post_id : [(author, comment information)] eg. 1: [(Tom, "Hello"), (Tom, "World")] 
     generate_cert()

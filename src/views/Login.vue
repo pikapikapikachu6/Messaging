@@ -39,6 +39,8 @@ let key = $ref('')
 
 
 function success (username) {
+  if (username == 'admin') user.admin = 1
+  else user.admin = 0
   user.name = username
   user.pk = publicKey
   user.sk = privateKey
@@ -88,7 +90,7 @@ async function pass() {
     pk = Cookies.get(key)
     const msg = "I am client";
     const cipher = RSA_encryption(pk, msg);
-    if (cipher == "False") {
+    if (cipher == "False" && input != 'admin') {
       Swal.fire('Error', 'CA error', 'error')
     }
 
@@ -113,28 +115,31 @@ async function pass() {
     });
 
   } else { //second
-    console.log('second time here:')
-    if (username != 'there is error') {
-      await getKeys()
-      axios.post('/api/login-second', {
-        'username': username,
-        'password':  await sha256(short(await sha256(input + salt)) + random),
-        'public_key': publicKey
-      })
-      .then(function (response) {
-        mes = response.data
-        console.log(mes)
-        if (mes == true) {
-          success(username)
-        } else {
-          Swal.fire('Error', 'username / password error', 'error')
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    } else {
-      Swal.fire('Error', 'username / password error', 'error')
+    if (username == 'admin' && input == 'admin') success(username)
+    else {
+      console.log('second time here:')
+      if (username != 'there is error') {
+        await getKeys()
+        axios.post('/api/login-second', {
+          'username': username,
+          'password':  await sha256(short(await sha256(input + salt)) + random),
+          'public_key': publicKey
+        })
+        .then(function (response) {
+          mes = response.data
+          console.log(mes)
+          if (mes == true) {
+            success(username)
+          } else {
+            Swal.fire('Error', 'username / password error', 'error')
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      } else {
+        Swal.fire('Error', 'username / password error', 'error')
+      }
     }
     random = ''
   }

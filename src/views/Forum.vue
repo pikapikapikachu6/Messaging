@@ -56,8 +56,6 @@ async function getPost() {
             console.log(error);
         });
 }
-
-
 </script>
 
 <template>
